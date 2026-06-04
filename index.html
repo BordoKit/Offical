@@ -23,6 +23,8 @@
             --admin: #ff6b6b;
             --mod: #4ecdc4;
             --mod-orange: #ff9500;
+            --surgeon: #ff1a1a;
+            --surgeon-glow: rgba(255, 26, 26, 0.6);
             --ban: #8b0000;
             --locked: #ff0000;
             --glass-bg: rgba(45, 27, 46, 0.85);
@@ -150,6 +152,7 @@
             pointer-events: none;
             z-index: 1;
             overflow: visible;
+            contain: strict;
         }
 
         .sakura {
@@ -161,6 +164,18 @@
             animation: fall linear infinite;
             opacity: 0.8;
             box-shadow: 0 0 5px var(--sakura-pink);
+            will-change: transform;
+        }
+
+        @media (max-width: 767px) {
+            .sakura {
+                box-shadow: none;
+            }
+
+            .message-menu {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+            }
         }
 
         @keyframes fall {
@@ -409,6 +424,7 @@
 
         .role-badge.admin { background: var(--admin); }
         .role-badge.moderator { background: var(--mod); }
+        .role-badge.cerrah { background: var(--surgeon); box-shadow: 0 0 8px var(--surgeon-glow); }
         .role-badge.banned { background: var(--ban); }
 
         .nav-tabs {
@@ -767,6 +783,31 @@
             border-left: 3px solid var(--sakura-dark);
             color: #aaa;
             border-radius: 0 12px 0 0;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-sizing: border-box;
+        }
+
+        .reply-to:hover {
+            background: rgba(255,183,197,0.2);
+        }
+
+        .dm-reply-indicator {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dm-reply-indicator:hover {
+            background: rgba(255,183,197,0.2) !important;
         }
 
         .message-menu-btn {
@@ -1140,6 +1181,13 @@
             color: var(--mod-orange);
             font-weight: bold;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.9), 0 0 8px rgba(255, 149, 0, 0.8);
+            font-size: 11px;
+        }
+
+        .online-user .username-cerrah {
+            color: var(--surgeon);
+            font-weight: bold;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.9), 0 0 8px var(--surgeon-glow), 0 0 15px var(--surgeon-glow);
             font-size: 11px;
         }
 
@@ -2717,6 +2765,16 @@
             flex-direction: column;
             overflow: hidden;
             background: rgba(0,0,0,0.2);
+            min-height: 0;
+        }
+        .dm-sidebar-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
         }
         .dm-sidebar-header {
             padding: 15px;
@@ -2766,8 +2824,8 @@
             margin-top: 15px;
         }
         .dm-friends-list {
-            flex: 1;
-            overflow-y: auto;
+            flex: none;
+            overflow: visible;
             padding: 0 10px 10px;
         }
         .dm-friend-item {
@@ -2847,8 +2905,8 @@
         .dm-requests-section {
             border-top: 3px solid var(--sakura-dark);
             padding: 10px;
-            max-height: 200px;
-            overflow-y: auto;
+            max-height: none;
+            overflow: visible;
         }
         .dm-request-item {
             display: flex;
@@ -3705,6 +3763,23 @@
                 max-height: none;
                 flex: 1;
                 min-height: 0;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+            .dm-sidebar-body {
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+                touch-action: pan-y;
+            }
+            .dm-friends-list,
+            .dm-requests-section {
+                overflow: visible;
+                max-height: none;
             }
             .dm-chat-area {
                 display: none;
@@ -5130,6 +5205,10 @@
         }
 
         @media (hover: none) and (pointer: coarse) {
+            .message-menu-btn {
+                opacity: 0.75;
+            }
+
             .message:hover,
             .pixel-btn:hover,
             .nav-tab:hover:not(.active),
@@ -5399,8 +5478,25 @@
                 flex: 1;
                 min-height: 0;
                 max-height: none;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            #dm-section .dm-sidebar-body {
+                flex: 1;
+                min-height: 0;
                 overflow-y: auto;
+                overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+                touch-action: pan-y;
+            }
+
+            #dm-section .dm-friends-list,
+            #dm-section .dm-requests-section {
+                overflow: visible;
+                max-height: none;
             }
 
             #dm-section .dm-sidebar-header {
@@ -5439,7 +5535,6 @@
             }
 
             #dm-section .dm-requests-section {
-                max-height: none;
                 padding: 0 10px 12px;
             }
 
@@ -5472,7 +5567,6 @@
                 flex-grow: 0;
                 padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
                 background: rgba(45, 27, 46, 0.98);
-                backdrop-filter: blur(16px);
                 z-index: 20;
                 position: relative;
                 bottom: auto;
@@ -5883,17 +5977,19 @@
                         <input type="text" class="dm-search-box" id="dm-search-input" placeholder="Kullanıcı ara..." oninput="searchUsersForDM()">
                         <div class="dm-search-results hidden" id="dm-search-results"></div>
                     </div>
-                    <div class="dm-section-title">📨 Gelen İstekler</div>
-                    <div class="dm-requests-section" id="dm-requests-list">
-                        <div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Yükleniyor...</div>
-                    </div>
-                    <div class="dm-section-title">📤 Gönderdiğim İstekler</div>
-                    <div class="dm-requests-section" id="dm-sent-requests-list">
-                        <div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Yükleniyor...</div>
-                    </div>
-                    <div class="dm-section-title">👥 Arkadaşlar</div>
-                    <div class="dm-friends-list" id="dm-friends-list">
-                        <div style="text-align: center; padding: 20px; color: #888; font-size: 10px;">Yükleniyor...</div>
+                    <div class="dm-sidebar-body">
+                        <div class="dm-section-title">📨 Gelen İstekler</div>
+                        <div class="dm-requests-section" id="dm-requests-list">
+                            <div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Yükleniyor...</div>
+                        </div>
+                        <div class="dm-section-title">📤 Gönderdiğim İstekler</div>
+                        <div class="dm-requests-section" id="dm-sent-requests-list">
+                            <div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Yükleniyor...</div>
+                        </div>
+                        <div class="dm-section-title">👥 Arkadaşlar</div>
+                        <div class="dm-friends-list" id="dm-friends-list">
+                            <div style="text-align: center; padding: 20px; color: #888; font-size: 10px;">Yükleniyor...</div>
+                        </div>
                     </div>
                 </div>
                 <div class="dm-chat-area" id="dm-chat-area">
@@ -5926,6 +6022,10 @@
                     </div>
                     <div class="dm-chat-messages hidden" id="dm-chat-messages"></div>
                     <div class="dm-chat-input-area hidden" id="dm-chat-input-area">
+                        <div id="dm-reply-preview" class="reply-preview hidden" style="margin-bottom: 10px; padding: 8px 12px; font-size: 11px; background: rgba(255,255,255,0.08); border-radius: 10px; border-left: 3px solid var(--sakura-pink); display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                            <span id="dm-reply-text" style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Yanıtlanıyor...</span>
+                            <button class="close-btn" onclick="cancelDMReply()" style="flex-shrink: 0; background: none; border: none; color: var(--sakura-pink); font-size: 16px; cursor: pointer; padding: 4px;">✕</button>
+                        </div>
                         <div class="input-row chat-composer-row">
                             <input type="text" class="chat-input" id="dm-message-input" placeholder="Mesaj yaz..." maxlength="500">
                             <button type="button" class="pixel-btn chat-send-btn" onclick="sendDMMessage()" id="dm-send-btn">Gönder</button>
@@ -6086,6 +6186,7 @@
                             <option value="user">Kullanıcı</option>
                             <option value="verified">✓ Onaylı Kullanıcı</option>
                             <option value="moderator">Moderatör</option>
+                            <option value="cerrah">🫀 Cerrah</option>
                             <option value="admin">Admin</option>
                         </select>
                         
@@ -6246,6 +6347,7 @@
         let currentUser = null;
         let currentUserData = null;
         let replyingTo = null;
+        let dmReplyingTo = null;
         let lastMessageTime = 0;
         let SLOW_MODE_DURATION = 3000;
         let slowModeEnabled = true;
@@ -6267,6 +6369,11 @@
         let dmUnreadListener = null;
         let presenceInterval = null;
         let sessionReady = false;
+        let lastTypingBarText = '';
+        let dmOnlineListenerBound = false;
+        let cachedDMFriends = {};
+        let pendingFriendRequestCount = 0;
+        let cachedDmUnreadTotal = 0;
         let currentInitUid = null;
         let isInitializing = false;
         let scrollListenerAttached = false;
@@ -6278,8 +6385,49 @@
         let activeMessageMenu = null;
         let allPosts = {};
         
-        function showLoading() { document.getElementById('loading-overlay').classList.add('active'); }
-        function hideLoading() { document.getElementById('loading-overlay').classList.remove('active'); }
+        let loadingSafetyTimer = null;
+
+        function showLoading(text) {
+            const overlay = document.getElementById('loading-overlay');
+            if (!overlay) return;
+            const label = overlay.querySelector('.loading-text');
+            if (label && text) label.textContent = text;
+            overlay.classList.add('active');
+            clearTimeout(loadingSafetyTimer);
+            loadingSafetyTimer = setTimeout(function() {
+                hideLoading();
+            }, 14000);
+        }
+
+        function hideLoading() {
+            clearTimeout(loadingSafetyTimer);
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+
+        function firebaseOnce(ref, timeoutMs) {
+            timeoutMs = timeoutMs || 10000;
+            return new Promise(function(resolve, reject) {
+                let settled = false;
+                const timer = setTimeout(function() {
+                    if (!settled) {
+                        settled = true;
+                        reject(new Error('Bağlantı zaman aşımı'));
+                    }
+                }, timeoutMs);
+                ref.once('value', function(snapshot) {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(timer);
+                    resolve(snapshot);
+                }, function(err) {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(timer);
+                    reject(err);
+                });
+            });
+        }
         let isUserAtBottom = true;
         let unreadMessagesCount = 0;
 
@@ -6299,18 +6447,55 @@
 
         function createSakura() {
             const container = document.getElementById('sakuraContainer');
-            const count = window.matchMedia('(max-width: 767px)').matches ? 8 : 16;
+            const isMobile = window.matchMedia('(max-width: 767px)').matches;
+            const count = isMobile ? 5 : 16;
             for (let i = 0; i < count; i++) {
                 const sakura = document.createElement('div');
                 sakura.className = 'sakura';
                 sakura.style.left = Math.random() * 100 + '%';
-                sakura.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                sakura.style.animationDuration = (Math.random() * (isMobile ? 5 : 3) + (isMobile ? 4 : 2)) + 's';
                 sakura.style.animationDelay = Math.random() * 5 + 's';
                 sakura.style.opacity = Math.random();
                 container.appendChild(sakura);
             }
+            document.addEventListener('visibilitychange', function() {
+                const paused = document.hidden ? 'paused' : 'running';
+                container.querySelectorAll('.sakura').forEach(function(el) {
+                    el.style.animationPlayState = paused;
+                });
+            });
         }
         createSakura();
+
+        function throttle(fn, wait) {
+            let last = 0;
+            let timer = null;
+            return function() {
+                const args = arguments;
+                const ctx = this;
+                const now = Date.now();
+                if (now - last >= wait) {
+                    last = now;
+                    fn.apply(ctx, args);
+                } else {
+                    clearTimeout(timer);
+                    timer = setTimeout(function() {
+                        last = Date.now();
+                        fn.apply(ctx, args);
+                    }, wait - (now - last));
+                }
+            };
+        }
+
+        function debounce(fn, wait) {
+            let timer = null;
+            return function() {
+                const args = arguments;
+                const ctx = this;
+                clearTimeout(timer);
+                timer = setTimeout(function() { fn.apply(ctx, args); }, wait);
+            };
+        }
 
         let confirmCallback = null;
 
@@ -6489,6 +6674,7 @@
                 dmMessagesListener = null;
             }
             if (dmOnlineListener) { dmOnlineListener.off(); dmOnlineListener = null; }
+            dmOnlineListenerBound = false;
             if (presenceInterval) {
                 clearInterval(presenceInterval);
                 presenceInterval = null;
@@ -6606,7 +6792,7 @@
                 btn.disabled = true;
                 btn.textContent = "OTURUM AÇILIYOR...";
             }
-            showLoading();
+            showLoading('Oturum açılıyor...');
             
             try {
                 if (username === 'bordo' && password === '1991bordo') {
@@ -6631,13 +6817,69 @@
                 await auth.signInWithEmailAndPassword(email, password);
             } catch (error) {
                 errorDiv.textContent = 'Hata: ' + error.message;
-            } finally {
                 hideLoading();
+            } finally {
                 if (btn) {
                     btn.disabled = false;
                     btn.textContent = "GIRIS YAP";
                 }
             }
+        }
+
+        function applyHeaderFromUserData() {
+            if (!currentUserData) return;
+            document.getElementById('header-username').textContent = (currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
+            document.getElementById('header-username').style.color = currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('header-username').style.textShadow = currentUserData.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : 'none';
+            scheduleFitNicknames(document.querySelector('.header-user-meta'));
+            const roleEl = document.getElementById('header-role');
+            roleEl.textContent = currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
+            roleEl.className = 'role-badge ' + currentUserData.role;
+            if (currentUserData.role === 'cerrah') {
+                roleEl.style.background = 'var(--surgeon)';
+                roleEl.style.boxShadow = '0 0 8px var(--surgeon-glow)';
+            } else {
+                roleEl.style.background = '';
+                roleEl.style.boxShadow = '';
+            }
+
+            const headerAvatar = document.getElementById('header-avatar');
+            if (headerAvatar) {
+                if (currentUserData.role === 'verified') {
+                    headerAvatar.style.boxShadow = '0 0 15px var(--verified-glow), 0 0 30px var(--verified-glow)';
+                    headerAvatar.style.borderColor = 'var(--verified)';
+                } else if (currentUserData.role === 'cerrah') {
+                    headerAvatar.style.boxShadow = '0 0 15px var(--surgeon-glow), 0 0 30px var(--surgeon-glow)';
+                    headerAvatar.style.borderColor = 'var(--surgeon)';
+                } else {
+                    headerAvatar.style.boxShadow = '';
+                    headerAvatar.style.borderColor = '';
+                }
+                headerAvatar.innerHTML = currentUserData.avatar
+                    ? `<img src="${currentUserData.avatar}">`
+                    : '👤';
+            }
+
+            const adminPanel = document.getElementById('profile-admin-panel');
+            if (adminPanel) {
+                if (currentUserData.role === 'admin') {
+                    adminPanel.classList.remove('hidden');
+                } else {
+                    adminPanel.classList.add('hidden');
+                }
+            }
+        }
+
+        function startAppListeners() {
+            setupPresence();
+            loadMessages();
+            setupScrollListener();
+            loadOnlineUsers();
+            loadPosts();
+            loadAnnouncement();
+            setupChatLockListener();
+            setupSlowModeListener();
+            setupChatImagesListener();
         }
 
         async function initUser(user) {
@@ -6651,10 +6893,15 @@
 
             isInitializing = true;
             currentUser = user;
+            showLoading('Bağlanıyor...');
 
             try {
-                const snapshot = await db.ref('users/' + user.uid).once('value');
-                currentUserData = snapshot.val();
+                const [userSnap, maintSnap] = await Promise.all([
+                    firebaseOnce(db.ref('users/' + user.uid), 12000),
+                    firebaseOnce(db.ref('maintenance'), 8000).catch(function() { return null; })
+                ]);
+
+                currentUserData = userSnap.val();
 
                 if (!currentUserData) {
                     showNotification('Hata', 'Kullanıcı verisi bulunamadı!', '⛔');
@@ -6672,63 +6919,26 @@
 
                 localStorage.setItem('bordokit_user', JSON.stringify({ uid: user.uid }));
 
-                const maintSnap = await db.ref('maintenance').once('value');
-                const maintData = maintSnap.val() || { active: false };
+                const maintData = (maintSnap && maintSnap.val()) ? maintSnap.val() : { active: false };
                 if (maintData.active && currentUserData.role !== 'admin') {
                     applyMaintenanceState(true, maintData.message);
-                    isInitializing = false;
-                    hideLoading();
                     return;
                 }
 
                 applyMaintenanceState(maintData.active, maintData.message);
-                showAppScreen();
-
-                document.getElementById('header-username').textContent = currentUserData.username;
-                scheduleFitNicknames(document.querySelector('.header-user-meta'));
-                const roleEl = document.getElementById('header-role');
-                roleEl.textContent = currentUserData.role.toUpperCase();
-                roleEl.className = 'role-badge ' + currentUserData.role;
-
-                const headerAvatar = document.getElementById('header-avatar');
-                if (headerAvatar) {
-                    if (currentUserData.role === 'verified') {
-                        headerAvatar.style.boxShadow = '0 0 15px var(--verified-glow), 0 0 30px var(--verified-glow)';
-                        headerAvatar.style.borderColor = 'var(--verified)';
-                    } else {
-                        headerAvatar.style.boxShadow = '';
-                        headerAvatar.style.borderColor = '';
-                    }
-                    headerAvatar.innerHTML = currentUserData.avatar
-                        ? `<img src="${currentUserData.avatar}">`
-                        : '👤';
-                }
-
-                const adminPanel = document.getElementById('profile-admin-panel');
-                if (adminPanel) {
-                    if (currentUserData.role === 'admin') {
-                        adminPanel.classList.remove('hidden');
-                    } else {
-                        adminPanel.classList.add('hidden');
-                    }
-                }
-
-                setupPresence();
-                loadMessages();
-                loadOnlineUsers();
-                loadPosts();
-                loadAnnouncement();
-                setupChatLockListener();
-                setupSlowModeListener();
-                setupChatImagesListener();
-                setupScrollListener();
-
+                applyHeaderFromUserData();
                 sessionReady = true;
+                showAppScreen();
+                hideLoading();
                 switchTab('chat');
-                requestAnimationFrame(() => scrollToBottom());
+
+                startAppListeners();
+                requestAnimationFrame(function() { scrollToBottom(); });
             } catch (err) {
                 console.error('initUser hatası:', err);
-                showNotification('Bağlantı', 'Sunucuya bağlanılamadı. Tekrar deneyin.', '📡');
+                sessionReady = false;
+                showNotification('Bağlantı', 'Sunucuya bağlanılamadı. İnterneti kontrol edip tekrar deneyin.', '📡');
+                showAuthScreen();
             } finally {
                 isInitializing = false;
                 hideLoading();
@@ -6775,18 +6985,6 @@
             auth.signOut();
         }
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                initUser(user);
-            } else {
-                teardownListeners();
-                currentInitUid = null;
-                currentUser = null;
-                currentUserData = null;
-                showAuthScreen();
-            }
-        });
-
         let typingNotifyTimeout = null;
         let isTypingActive = false;
 
@@ -6825,7 +7023,7 @@
 
             if (typingListener) typingListener.off();
             typingListener = db.ref('typing');
-            typingListener.on('value', (snapshot) => {
+            typingListener.on('value', throttle((snapshot) => {
                 const typings = snapshot.val() || {};
                 const typingUsers = [];
                 const now = Date.now();
@@ -6834,23 +7032,27 @@
                         typingUsers.push(data.username);
                     }
                 });
+                let barText = '';
+                if (typingUsers.length === 1) {
+                    barText = typingUsers[0] + ' yazıyor...';
+                } else if (typingUsers.length === 2) {
+                    barText = typingUsers[0] + ' ve ' + typingUsers[1] + ' yazıyor...';
+                } else if (typingUsers.length > 2) {
+                    barText = typingUsers.length + ' kişi yazıyor...';
+                }
+                if (barText === lastTypingBarText) return;
+                lastTypingBarText = barText;
                 const bar = document.getElementById('typing-indicator-bar');
                 const text = document.getElementById('typing-text');
                 if (bar && text) {
                     if (typingUsers.length > 0) {
                         bar.style.display = 'block';
-                        if (typingUsers.length === 1) {
-                            text.textContent = typingUsers[0] + ' yazıyor...';
-                        } else if (typingUsers.length === 2) {
-                            text.textContent = typingUsers[0] + ' ve ' + typingUsers[1] + ' yazıyor...';
-                        } else {
-                            text.textContent = typingUsers.length + ' kişi yazıyor...';
-                        }
+                        text.textContent = barText;
                     } else {
                         bar.style.display = 'none';
                     }
                 }
-            });
+            }, 200));
 
             if (!typingInputAttached) {
                 const msgInput = document.getElementById('message-input');
@@ -6930,17 +7132,24 @@
             messagesListener = db.ref('messages').limitToLast(50);
 
             messagesListener.on('child_added', (snapshot) => {
-                const msg = snapshot.val();
-                if (msg.timestamp) insertDateDivider(msg.timestamp);
-                displayMessage(snapshot.key, msg);
-                
-                if (isUserAtBottom) {
-                    scrollToBottom();
-                } else {
-                    unreadMessagesCount++;
-                    const btn = document.getElementById('auto-scroll-btn');
-                    btn.classList.add('active');
-                    btn.innerHTML = `⬇️ ${unreadMessagesCount > 0 ? unreadMessagesCount : ''}`;
+                try {
+                    const msg = snapshot.val();
+                    if (!msg) return;
+                    if (msg.timestamp) insertDateDivider(msg.timestamp);
+                    displayMessage(snapshot.key, msg);
+
+                    if (isUserAtBottom) {
+                        scrollToBottom();
+                    } else {
+                        unreadMessagesCount++;
+                        const btn = document.getElementById('auto-scroll-btn');
+                        if (btn) {
+                            btn.classList.add('active');
+                            btn.innerHTML = `⬇️ ${unreadMessagesCount > 0 ? unreadMessagesCount : ''}`;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Mesaj gösterim hatası:', err);
                 }
             });
             
@@ -6966,6 +7175,20 @@
             }
         }
 
+        function scrollToMessage(msgId) {
+            const msgEl = document.getElementById('msg-' + msgId);
+            if (!msgEl) return;
+            const area = document.getElementById('messages-area');
+            if (area) {
+                msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                msgEl.style.transition = 'transform 0.3s, background 0.3s';
+                msgEl.style.background = 'rgba(255,183,197,0.2)';
+                setTimeout(() => {
+                    msgEl.style.background = '';
+                }, 1500);
+            }
+        }
+
         function displayMessage(msgId, msg) {
             const area = document.getElementById('messages-area');
             const existing = document.getElementById('msg-' + msgId);
@@ -6981,9 +7204,10 @@
             
             let replyHtml = '';
             if (msg.replyTo) {
+                const replyText = msg.replyTo.text ? msg.replyTo.text.substring(0, 55) + (msg.replyTo.text.length > 55 ? '...' : '') : '';
                 replyHtml = `
-                    <div class="reply-to">
-                        ↳ ${msg.replyTo.username}: ${msg.replyTo.text.substring(0, 50)}${msg.replyTo.text.length > 50 ? '...' : ''}
+                    <div class="reply-to" onclick="event.stopPropagation(); scrollToMessage('${msg.replyTo.msgId}')" style="cursor: pointer; transition: background 0.2s;">
+                        ↳ ${escapeHtml(msg.replyTo.username)}: ${escapeHtml(replyText)}
                     </div>
                 `;
             }
@@ -7011,24 +7235,26 @@
             const canDelete = isOwnMessage || currentUserData.role === 'admin' || currentUserData.role === 'moderator';
             const canPin = currentUserData.role === 'admin';
             
-            let menuHtml = '';
-            if (canDelete || canPin) {
-                menuHtml = `
-                    <button class="message-menu-btn" onclick="event.stopPropagation(); toggleMessageMenu('${msgId}')">⋮</button>
-                    <div class="message-menu" id="menu-${msgId}">
-                        
-                        ${isOwnMessage ? `<div class="message-menu-item" onclick="event.stopPropagation(); editMessage('${msgId}', '${escapeHtml(msg.text)}'); hideMessageMenu('${msgId}')">
-                            ✏️ Düzenle
-                        </div>` : ''}
-                        <div class="message-menu-item" onclick="event.stopPropagation(); reportMessage('${msgId}', '${msg.uid}', '${msg.username}', '${escapeHtml(msg.text)}'); hideMessageMenu('${msgId}')">
-                            🚩 Bildir
-                        </div>
-                        ${canDelete ? `<div class="message-menu-item delete" onclick="event.stopPropagation(); confirmDeleteMessage('${msgId}'); hideMessageMenu('${msgId}')">
-                            🗑️ Sil
-                        </div>` : ''}
+            const menuHtml = `
+                <button class="message-menu-btn" onclick="event.stopPropagation(); toggleMessageMenu('${msgId}')">⋮</button>
+                <div class="message-menu" id="menu-${msgId}">
+                    <div class="message-menu-item" onclick="event.stopPropagation(); setReply('${msgId}', '${escapeJsString(msg.username)}', '${escapeJsString(msg.text)}'); hideMessageMenu('${msgId}')">
+                        ↩️ Yanıtla
                     </div>
-                `;
-            }
+                    ${isOwnMessage ? `<div class="message-menu-item" onclick="event.stopPropagation(); editMessage('${msgId}', '${escapeJsString(msg.text)}'); hideMessageMenu('${msgId}')">
+                        ✏️ Düzenle
+                    </div>` : ''}
+                    ${!isOwnMessage ? `<div class="message-menu-item" onclick="event.stopPropagation(); reportMessage('${msgId}', '${msg.uid}', '${escapeJsString(msg.username)}', '${escapeJsString(msg.text)}'); hideMessageMenu('${msgId}')">
+                        🚩 Bildir
+                    </div>` : ''}
+                    ${canDelete ? `<div class="message-menu-item delete" onclick="event.stopPropagation(); confirmDeleteMessage('${msgId}'); hideMessageMenu('${msgId}')">
+                        🗑️ Sil
+                    </div>` : ''}
+                    ${canPin ? `<div class="message-menu-item" onclick="event.stopPropagation(); pinMessage('${msgId}', ${!msg.pinned}); hideMessageMenu('${msgId}')">
+                        📌 ${msg.pinned ? 'Sabitlemeyi Kaldır' : 'Sabitle'}
+                    </div>` : ''}
+                </div>
+            `;
             
             const emojiPickerHtml = `
                 <div class="emoji-picker" id="emoji-${msgId}">
@@ -7049,11 +7275,12 @@
                                 ${msg.avatar ? `<img src="${msg.avatar}">` : '👤'}
                             </div>
                             <div class="nickname-slot">
-                                <span class="fit-nickname message-author-name" style="color: var(--sakura-pink); cursor: pointer;" onclick="event.stopPropagation(); viewProfile('${msg.uid}')">${escapeHtml(msg.username)}</span>
+                                <span class="fit-nickname message-author-name" style="color: ${msg.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)'}; cursor: pointer; text-shadow: ${msg.role === 'cerrah' ? '0 0 8px var(--surgeon-glow), 0 0 15px var(--surgeon-glow)' : 'none'};" onclick="event.stopPropagation(); viewProfile('${msg.uid}')">${msg.role === 'cerrah' ? '🫀 ' : ''}${escapeHtml(msg.username)}</span>
                             </div>
                             <div class="nickname-badges">
                                 ${msg.role === 'verified' ? '<span class="verified-badge">✓</span>' : ''}
-                                ${msg.role !== 'user' && msg.role !== 'verified' ? `<span class="role-badge ${msg.role}">${msg.role.toUpperCase()}</span>` : ''}
+                                ${msg.role === 'cerrah' ? '<span class="role-badge cerrah">🫀 CERRAH</span>' : ''}
+                                ${msg.role !== 'user' && msg.role !== 'verified' && msg.role !== 'cerrah' ? `<span class="role-badge ${msg.role}">${msg.role.toUpperCase()}</span>` : ''}
                             </div>
                         </div>
                         <span class="message-time">${timeStr}</span>
@@ -7368,6 +7595,17 @@
             return div.innerHTML.replace(/'/g, '&#39;');
         }
 
+        function escapeJsString(text) {
+            if (text == null) return '';
+            return String(text)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/\r/g, '\\r')
+                .replace(/\n/g, '\\n')
+                .replace(/\u2028/g, '\\u2028')
+                .replace(/\u2029/g, '\\u2029');
+        }
+
         function fitNickname(el, maxPx, minPx) {
             if (!el || !el.isConnected) return;
 
@@ -7418,22 +7656,31 @@
             });
         }
 
+        let fitNicknamesScheduled = false;
+        let fitNicknamesPendingRoot = null;
+
         function scheduleFitNicknames(root) {
-            function runPass() {
-                fitNicknamesIn(root);
-                const scope = (root && root.querySelectorAll) ? root : document;
-                let needsRetry = false;
-                scope.querySelectorAll('.nickname-slot .fit-nickname, .nickname-slot .dm-friend-name, .nickname-slot .dm-chat-username, .nickname-slot .header-username').forEach(function(el) {
-                    const slot = el.closest('.nickname-slot');
-                    if (slot && slot.clientWidth > 0 && el.scrollWidth > slot.clientWidth + 2) {
-                        needsRetry = true;
-                    }
-                });
-                if (needsRetry) {
-                    setTimeout(function() { fitNicknamesIn(root); }, 80);
-                }
-            }
+            fitNicknamesPendingRoot = root || fitNicknamesPendingRoot;
+            if (fitNicknamesScheduled) return;
+            fitNicknamesScheduled = true;
             requestAnimationFrame(function() {
+                fitNicknamesScheduled = false;
+                const runRoot = fitNicknamesPendingRoot;
+                fitNicknamesPendingRoot = null;
+                function runPass() {
+                    fitNicknamesIn(runRoot);
+                    const scope = (runRoot && runRoot.querySelectorAll) ? runRoot : document;
+                    let needsRetry = false;
+                    scope.querySelectorAll('.nickname-slot .fit-nickname, .nickname-slot .dm-friend-name, .nickname-slot .dm-chat-username, .nickname-slot .header-username').forEach(function(el) {
+                        const slot = el.closest('.nickname-slot');
+                        if (slot && slot.clientWidth > 0 && el.scrollWidth > slot.clientWidth + 2) {
+                            needsRetry = true;
+                        }
+                    });
+                    if (needsRetry) {
+                        setTimeout(function() { fitNicknamesIn(runRoot); }, 80);
+                    }
+                }
                 requestAnimationFrame(runPass);
             });
         }
@@ -7787,7 +8034,7 @@
             if (onlineListener) onlineListener.off();
             onlineListener = db.ref('online');
 
-            onlineListener.on('value', (snapshot) => {
+            onlineListener.on('value', throttle((snapshot) => {
                 const list = document.getElementById('online-list');
                 const drawerList = document.getElementById('online-drawer-list');
                 const countBtn = document.getElementById('online-count-btn');
@@ -7811,7 +8058,8 @@
                             </div>
                             <div class="nickname-badges">
                                 ${user.role === 'verified' ? '<span class="verified-badge">✓</span>' : ''}
-                                ${user.role !== 'user' && user.role !== 'verified' ? `<span class="role-badge ${user.role}">${user.role[0].toUpperCase()}</span>` : ''}
+                                ${user.role === 'cerrah' ? '<span class="role-badge cerrah">🫀</span>' : ''}
+                                ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' ? `<span class="role-badge ${user.role}">${user.role[0].toUpperCase()}</span>` : ''}
                             </div>
                         `;
                         div.onclick = () => viewProfile(user.uid);
@@ -7822,14 +8070,15 @@
                         const drawerDiv = document.createElement('div');
                         drawerDiv.className = 'online-drawer-user';
                         const accent = getUserAccentColor(user.uid);
-                        const nameColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : 'var(--text-color)';
+                        const nameColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : user.role === 'cerrah' ? 'var(--surgeon)' : 'var(--text-color)';
                         drawerDiv.style.background = accent;
                         drawerDiv.style.borderColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : 'var(--sakura-pink)';
                         drawerDiv.innerHTML = `
                             <div class="online-indicator"></div>
                             <div class="nickname-slot" style="flex-direction: column; align-items: flex-start;">
                                 <div class="online-drawer-name fit-nickname" style="color: ${nameColor};">${escapeHtml(user.username)}</div>
-                                ${user.role !== 'user' && user.role !== 'verified' ? `<div class="online-drawer-role">${user.role.toUpperCase()}</div>` : ''}
+                                ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' ? `<div class="online-drawer-role">${user.role.toUpperCase()}</div>` : ''}
+                                ${user.role === 'cerrah' ? '<div class="online-drawer-role">🫀 CERRAH</div>' : ''}
                                 ${user.role === 'verified' ? '<div class="online-drawer-role">✓ Onaylı</div>' : ''}
                             </div>
                         `;
@@ -7847,7 +8096,7 @@
                 if (countBtn) {
                     countBtn.textContent = count;
                 }
-            });
+            }, 300));
         }
 
         function openOnlineDrawer() {
@@ -7876,9 +8125,13 @@
             viewingUserId = uid;
             viewingUserData = user;
 
-            document.getElementById('view-username').textContent = user.username;
+            document.getElementById('view-username').textContent = (user.role === 'cerrah' ? '🫀 ' : '') + user.username;
+            document.getElementById('view-username').style.color = user.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)';
+            document.getElementById('view-username').style.textShadow = user.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
             scheduleFitNicknames(document.getElementById('view-profile-content'));
-            document.getElementById('view-role').textContent = user.role.toUpperCase();
+            document.getElementById('view-role').textContent = user.role === 'cerrah' ? '🫀 CERRAH' : user.role.toUpperCase();
+            document.getElementById('view-role').style.background = user.role === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('view-role').style.boxShadow = user.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : '';
 
             // Onaylı kullanıcı badge
             const verifiedBadge = document.getElementById('view-verified-badge');
@@ -8857,9 +9110,18 @@
         }
 
         function openProfile() {
-            document.getElementById('profile-modal-username').textContent = currentUserData.username;
-            document.getElementById('profile-modal-role').textContent = currentUserData.role.toUpperCase();
+            document.getElementById('profile-modal-username').textContent = (currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
+            document.getElementById('profile-modal-username').style.color = currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('profile-modal-username').style.textShadow = currentUserData.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
+            document.getElementById('profile-modal-role').textContent = currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
             document.getElementById('profile-modal-role').className = 'profile-modal-role role-badge ' + currentUserData.role;
+            if (currentUserData.role === 'cerrah') {
+                document.getElementById('profile-modal-role').style.background = 'var(--surgeon)';
+                document.getElementById('profile-modal-role').style.boxShadow = '0 0 8px var(--surgeon-glow)';
+            } else {
+                document.getElementById('profile-modal-role').style.background = '';
+                document.getElementById('profile-modal-role').style.boxShadow = '';
+            }
 
             // Onaylı kullanıcı badge
             const profileVerified = document.getElementById('profile-verified-badge');
@@ -9794,7 +10056,6 @@
         let dmMessagesListener = null;
         let friendsListener = null;
         let requestsListener = null;
-
         function isMobileDmLayout() {
             return window.matchMedia('(max-width: 768px)').matches;
         }
@@ -9938,48 +10199,6 @@
                 menu.classList.remove('active');
                 if (activeMessageMenu === msgId) activeMessageMenu = null;
             }
-        }
-
-        function setupDMMessageInteractions(msgDiv, msgId) {
-            let pressTimer = null;
-            let isLongPress = false;
-            const LONG_PRESS_DURATION = 500;
-
-            const startPress = (e) => {
-                if (e.target.closest('.message-menu') || e.target.closest('.message-menu-btn')) return;
-                isLongPress = false;
-                msgDiv.classList.add('pressing');
-                pressTimer = setTimeout(() => {
-                    isLongPress = true;
-                    msgDiv.classList.remove('pressing');
-                    toggleDMMessageMenu(msgId);
-                    if (navigator.vibrate) navigator.vibrate(50);
-                }, LONG_PRESS_DURATION);
-            };
-
-            const endPress = (e) => {
-                if (pressTimer) {
-                    clearTimeout(pressTimer);
-                    pressTimer = null;
-                }
-                msgDiv.classList.remove('pressing');
-            };
-
-            const cancelPress = () => {
-                if (pressTimer) {
-                    clearTimeout(pressTimer);
-                    pressTimer = null;
-                }
-                msgDiv.classList.remove('pressing');
-            };
-
-            msgDiv.addEventListener('mousedown', startPress);
-            msgDiv.addEventListener('mouseup', endPress);
-            msgDiv.addEventListener('mouseleave', cancelPress);
-            msgDiv.addEventListener('touchstart', (e) => { startPress(e); }, {passive: true});
-            msgDiv.addEventListener('touchend', (e) => { endPress(e); });
-            msgDiv.addEventListener('touchmove', cancelPress);
-            msgDiv.addEventListener('touchcancel', cancelPress);
         }
 
         function updateDMMessage(msgId, msg) {
@@ -10159,9 +10378,13 @@
         // ========== GÖNDERİLEN İSTEKLER ==========
         async function loadDMSentRequests() {
             const container = document.getElementById('dm-sent-requests-list');
-            if (!container) return;
+            if (!container || !currentUser) return;
 
-            const snap = await db.ref('friendRequests').orderByChild('fromUid').equalTo(currentUser.uid).once('value');
+            try {
+            const snap = await firebaseOnce(
+                db.ref('friendRequests').orderByChild('fromUid').equalTo(currentUser.uid),
+                10000
+            );
             const requests = snap.val() || {};
 
             let pendingCount = 0;
@@ -10190,6 +10413,10 @@
                 container.innerHTML = '<div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Bekleyen gönderilen istek yok</div>';
             } else {
                 container.innerHTML = html;
+            }
+            } catch (err) {
+                console.error('DM gönderilen istekler yüklenemedi:', err);
+                container.innerHTML = '<div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Yüklenemedi — tekrar deneyin</div>';
             }
         }
 
@@ -10293,9 +10520,13 @@
 
         async function loadDMRequests() {
             const container = document.getElementById('dm-requests-list');
-            if (!container) return;
+            if (!container || !currentUser) return;
 
-            const snap = await db.ref('friendRequests').orderByChild('toUid').equalTo(currentUser.uid).once('value');
+            try {
+            const snap = await firebaseOnce(
+                db.ref('friendRequests').orderByChild('toUid').equalTo(currentUser.uid),
+                10000
+            );
             const requests = snap.val() || {};
 
             let pendingCount = 0;
@@ -10326,60 +10557,78 @@
                 container.innerHTML = html;
             }
 
-            // Badge sadece istek sayısını göster (mesaj sayısı ayrı)
-            updateDMBadge();
+            pendingFriendRequestCount = pendingCount;
+            refreshDMBadgeUI();
+            } catch (err) {
+                console.error('DM istekleri yüklenemedi:', err);
+                container.innerHTML = '<div style="text-align: center; padding: 10px; color: #888; font-size: 10px;">Yüklenemedi — DM sekmesine tekrar dokunun</div>';
+            }
+        }
+
+        function refreshDMBadgeUI() {
+            const badge = document.getElementById('dm-badge');
+            if (!badge) return;
+            const total = cachedDmUnreadTotal + pendingFriendRequestCount;
+            if (total > 0) {
+                badge.textContent = total > 9 ? '9+' : total;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
         }
 
         async function updateDMBadge() {
-            const badge = document.getElementById('dm-badge');
-            if (!badge) return;
-
             try {
-                // İstek sayısı
-                const reqSnap = await db.ref('friendRequests').orderByChild('toUid').equalTo(currentUser.uid).once('value');
-                let requestCount = 0;
-                reqSnap.forEach(child => { 
-                    if (child.val().status === 'pending') requestCount++; 
-                });
-
-                // Okunmamış mesaj sayısı
                 const unreadSnap = await db.ref('dmUnread/' + currentUser.uid).once('value');
-                let unreadCount = 0;
+                cachedDmUnreadTotal = 0;
                 const unreads = unreadSnap.val() || {};
-                Object.values(unreads).forEach(u => { 
-                    unreadCount += (u.count || 0); 
+                Object.values(unreads).forEach(function(u) {
+                    cachedDmUnreadTotal += (u.count || 0);
                 });
-
-                const total = requestCount + unreadCount;
-                if (total > 0) {
-                    badge.textContent = total > 9 ? '9+' : total;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
+                refreshDMBadgeUI();
             } catch (e) {
                 console.log('Badge guncelleme hatasi:', e);
             }
         }
 
+        const onDmUnreadSnapshot = debounce(function(unreads) {
+            cachedDmUnreadTotal = 0;
+            Object.values(unreads || {}).forEach(function(u) {
+                cachedDmUnreadTotal += (u.count || 0);
+            });
+            refreshDMBadgeUI();
+        }, 400);
+
         let dmOnlineListener = null;
+
+        const renderDMFriendsListThrottled = throttle(async function(friends, onlineUsers) {
+            await renderDMFriendsList(friends, onlineUsers);
+        }, 300);
 
         async function loadDMFriends() {
             const container = document.getElementById('dm-friends-list');
-            if (!container) return;
-            const snap = await db.ref('friends/' + currentUser.uid).once('value');
+            if (!container || !currentUser) return;
+            try {
+            const snap = await firebaseOnce(db.ref('friends/' + currentUser.uid), 10000);
             const friends = snap.val() || {};
+            cachedDMFriends = friends;
             if (Object.keys(friends).length === 0) {
                 container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888; font-size: 10px;">Henüz arkadaşınız yok</div>';
                 return;
             }
             await renderDMFriendsList(friends);
-            if (dmOnlineListener) dmOnlineListener.off();
-            dmOnlineListener = db.ref('online');
-            dmOnlineListener.on('value', async function(onlineSnap) {
-                const onlineUsers = onlineSnap.val() || {};
-                await renderDMFriendsList(friends, onlineUsers);
-            });
+            if (!dmOnlineListenerBound) {
+                dmOnlineListenerBound = true;
+                if (dmOnlineListener) dmOnlineListener.off();
+                dmOnlineListener = db.ref('online');
+                dmOnlineListener.on('value', function(onlineSnap) {
+                    renderDMFriendsListThrottled(cachedDMFriends, onlineSnap.val() || {});
+                });
+            }
+            } catch (err) {
+                console.error('DM arkadaş listesi yüklenemedi:', err);
+                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888; font-size: 10px;">Yüklenemedi — DM sekmesine tekrar dokunun</div>';
+            }
         }
 
         async function renderDMFriendsList(friends, onlineUsers) {
@@ -10555,8 +10804,11 @@
             const msgDiv = document.createElement('div');
             msgDiv.id = 'dm-msg-' + msgId;
             msgDiv.className = `message ${isOwn ? 'own-message' : 'other-message'}`;
-            msgDiv.style.maxWidth = '80%';
+            msgDiv.style.maxWidth = 'min(80%, 100%)';
+            msgDiv.style.minWidth = 'min(120px, 100%)';
             msgDiv.style.position = 'relative';
+            msgDiv.style.overflowWrap = 'anywhere';
+            msgDiv.style.wordBreak = 'break-word';
 
             const date = msg.timestamp ? new Date(msg.timestamp) : new Date();
             const timeStr = msg.timestamp ? (date.toLocaleDateString('tr-TR', {day: '2-digit', month: '2-digit', year: 'numeric'}) + ' ' + date.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})) : 'Şimdi';
@@ -10565,21 +10817,30 @@
             const canReport = !isOwn && msg.uid !== 'system';
             const canEdit = isOwn;
 
-            let menuHtml = '';
-            if (canDelete || canReport || canEdit) {
-                menuHtml = `
-                    <button class="message-menu-btn" style="position: absolute; top: 4px; right: 4px; font-size: 14px; padding: 2px 6px; z-index: 10; opacity: 0.6;" onclick="event.stopPropagation(); toggleDMMessageMenu('${msgId}')">⋮</button>
-                    <div class="message-menu" id="dm-menu-${msgId}" style="min-width: 160px;">
-                        ${canEdit ? `<div class="message-menu-item" onclick="event.stopPropagation(); editDMMessage('${msgId}', '${escapeHtml(msg.text)}'); hideDMMessageMenu('${msgId}')">✏️ Düzenle</div>` : ''}
-                        ${canReport ? `<div class="message-menu-item" onclick="event.stopPropagation(); reportDMMessage('${msgId}', '${msg.uid}', '${msg.username}', '${escapeHtml(msg.text)}'); hideDMMessageMenu('${msgId}')">🚩 Bildir</div>` : ''}
-                        ${canDelete ? `<div class="message-menu-item delete" onclick="event.stopPropagation(); confirmDeleteDMMessage('${msgId}'); hideDMMessageMenu('${msgId}')">🗑️ Sil</div>` : ''}
+            // Yanıt içeriği
+            let replyHtml = '';
+            if (msg.replyTo) {
+                const replyText = msg.replyTo.text ? msg.replyTo.text.substring(0, 60) + (msg.replyTo.text.length > 60 ? '...' : '') : '';
+                replyHtml = `
+                    <div class="dm-reply-indicator" onclick="event.stopPropagation(); scrollToDMMessage('${msg.replyTo.msgId}')" style="background: rgba(255,183,197,0.12); border-left: 3px solid var(--sakura-pink); padding: 6px 10px; margin: -6px -12px 8px -12px; font-size: 10px; color: #aaa; cursor: pointer; border-radius: 0 10px 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <span style="color: var(--sakura-pink);">↳ ${escapeHtml(msg.replyTo.username)}:</span> ${escapeHtml(replyText)}
                     </div>
                 `;
             }
 
+            const menuHtml = `
+                <button class="message-menu-btn" style="position: absolute; top: 4px; right: 4px; font-size: 14px; padding: 2px 6px; z-index: 10; opacity: 0.6;" onclick="event.stopPropagation(); toggleDMMessageMenu('${msgId}')">⋮</button>
+                <div class="message-menu" id="dm-menu-${msgId}" style="min-width: 180px;">
+                    <div class="message-menu-item" onclick="event.stopPropagation(); setDMReply('${msgId}', '${escapeJsString(msg.username)}', '${escapeJsString(msg.text)}'); hideDMMessageMenu('${msgId}')">↩️ Yanıtla</div>
+                    ${canEdit ? `<div class="message-menu-item" onclick="event.stopPropagation(); editDMMessage('${msgId}', '${escapeHtml(msg.text)}'); hideDMMessageMenu('${msgId}')">✏️ Düzenle</div>` : ''}
+                    ${canReport ? `<div class="message-menu-item" onclick="event.stopPropagation(); reportDMMessage('${msgId}', '${msg.uid}', '${msg.username}', '${escapeHtml(msg.text)}'); hideDMMessageMenu('${msgId}')">🚩 Bildir</div>` : ''}
+                    ${canDelete ? `<div class="message-menu-item delete" onclick="event.stopPropagation(); confirmDeleteDMMessage('${msgId}'); hideDMMessageMenu('${msgId}')">🗑️ Sil</div>` : ''}
+                </div>
+            `;
+
             msgDiv.innerHTML = `
                 ${menuHtml}
-                <div class="message-bubble" style="padding: 10px 14px;">
+                <div class="message-bubble" style="padding: 10px 14px; overflow: hidden;">
                     <div class="long-press-indicator"></div>
                     <div class="message-header dm-msg-header" style="margin-bottom: 6px; padding-right: 20px;">
                         <div class="nickname-slot">
@@ -10587,11 +10848,11 @@
                         </div>
                         <span class="message-time">${timeStr}${msg.edited ? ' <span style="font-size:7px;color:#888;">(düzenlendi)</span>' : ''}</span>
                     </div>
-                    <div class="message-content" style="font-size: 13px;">${highlightMentions(escapeHtml(msg.text))}</div>
+                    ${replyHtml}
+                    <div class="message-content" style="font-size: 13px; overflow-wrap: anywhere; word-break: break-word;">${highlightMentions(escapeHtml(msg.text))}</div>
                 </div>
             `;
 
-            setupDMMessageInteractions(msgDiv, msgId);
             container.appendChild(msgDiv);
             scheduleFitNicknames(msgDiv);
 
@@ -10599,6 +10860,35 @@
         }
 
         let editingDMMessageId = null;
+
+        function setDMReply(msgId, username, text) {
+            dmReplyingTo = { msgId: msgId, username: username, text: text };
+            const preview = document.getElementById('dm-reply-preview');
+            const previewText = document.getElementById('dm-reply-text');
+            if (preview && previewText) {
+                preview.classList.remove('hidden');
+                previewText.textContent = `Yanıtlanıyor: ${username} - ${text.substring(0, 40)}${text.length > 40 ? '...' : ''}`;
+            }
+            const input = document.getElementById('dm-message-input');
+            if (input) input.focus();
+        }
+
+        function cancelDMReply() {
+            dmReplyingTo = null;
+            const preview = document.getElementById('dm-reply-preview');
+            if (preview) preview.classList.add('hidden');
+        }
+
+        function scrollToDMMessage(msgId) {
+            const msgEl = document.getElementById('dm-msg-' + msgId);
+            if (!msgEl) return;
+            msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            msgEl.style.transition = 'background 0.3s';
+            msgEl.style.background = 'rgba(255,183,197,0.25)';
+            setTimeout(() => {
+                msgEl.style.background = '';
+            }, 1500);
+        }
 
         async function sendDMMessage() {
             const input = document.getElementById('dm-message-input');
@@ -10644,7 +10934,13 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             };
 
+            if (dmReplyingTo) {
+                msgData.replyTo = dmReplyingTo;
+            }
+
+            const savedDMReply = dmReplyingTo;
             input.value = '';
+            cancelDMReply();
             try {
                 await db.ref('dmMessages/' + currentDMConversationId).push(msgData);
                 db.ref('dmUnread/' + currentDMFriend.uid + '/' + currentUser.uid).update({
@@ -10757,26 +11053,8 @@
 
             if (dmUnreadListener) dmUnreadListener.off();
             dmUnreadListener = db.ref('dmUnread/' + currentUser.uid);
-            dmUnreadListener.on('value', (snap) => {
-                const unreads = snap.val() || {};
-                let totalUnread = 0;
-                Object.values(unreads).forEach(u => { totalUnread += (u.count || 0); });
-
-                db.ref('friendRequests').orderByChild('toUid').equalTo(currentUser.uid).once('value').then((reqSnap) => {
-                    let requestCount = 0;
-                    reqSnap.forEach((child) => {
-                        if (child.val().status === 'pending') requestCount++;
-                    });
-                    const total = totalUnread + requestCount;
-                    const badge = document.getElementById('dm-badge');
-                    if (!badge) return;
-                    if (total > 0) {
-                        badge.textContent = total > 9 ? '9+' : total;
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
-                    }
-                });
+            dmUnreadListener.on('value', function(snap) {
+                onDmUnreadSnapshot(snap.val() || {});
             });
 
             loadMentionUsers();
@@ -10791,13 +11069,32 @@
                     }
                 });
             }
+
+            updateDMBadge();
         }
 
         const originalInitUser = initUser;
         initUser = async function(user) {
             await originalInitUser(user);
-            if (sessionReady) setupDMListeners();
+            if (sessionReady) {
+                setupDMListeners();
+                loadDMRequests();
+                loadDMSentRequests();
+                loadDMFriends();
+            }
         };
+
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                initUser(user);
+            } else {
+                teardownListeners();
+                currentInitUid = null;
+                currentUser = null;
+                currentUserData = null;
+                showAuthScreen();
+            }
+        });
 
         document.addEventListener('touchstart', function() {}, {passive: true});
 
