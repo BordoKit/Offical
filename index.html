@@ -13,18 +13,21 @@
 
     <style>
         :root {
-            --sakura-pink: #ffb7c5;
-            --sakura-dark: #ff69b4;
-            --sakura-light: #ffe4e1;
             --pixel-bg: #2d1b2e;
             --pixel-accent: #4a2c4a;
             --text-color: #ffe4e1;
+            --sakura-pink: #ffb7c5;
+            --sakura-dark: #ff69b4;
+            --sakura-light: #ffe4e1;
             --online: #7fff7f;
             --admin: #ff6b6b;
             --mod: #4ecdc4;
             --mod-orange: #ff9500;
             --surgeon: #ff1a1a;
             --surgeon-glow: rgba(255, 26, 26, 0.6);
+            --black-lung: #1a1a1a;
+            --black-lung-glow: rgba(0, 0, 0, 0.8);
+            --black-lung-sparkle: rgba(255, 255, 255, 0.3);
             --ban: #8b0000;
             --locked: #ff0000;
             --glass-bg: rgba(45, 27, 46, 0.85);
@@ -84,7 +87,6 @@
             display: block;
         }
 
-        .sakura,
         .avatar img,
         .message-author-avatar img,
         .post-image,
@@ -143,45 +145,6 @@
             }
         }
 
-        .sakura-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            overflow: visible;
-            contain: strict;
-        }
-
-        .sakura {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--sakura-pink);
-            border-radius: 50% 0 50% 0;
-            animation: fall linear infinite;
-            opacity: 0.8;
-            box-shadow: 0 0 5px var(--sakura-pink);
-            will-change: transform;
-        }
-
-        @media (max-width: 767px) {
-            .sakura {
-                box-shadow: none;
-            }
-
-            .message-menu {
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
-            }
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(-10px) rotate(0deg) translateX(0); opacity: 1; }
-            100% { transform: translateY(100dvh) rotate(720deg) translateX(100px); opacity: 0; }
-        }
 
         #auth-container {
             display: flex;
@@ -261,6 +224,7 @@
             line-height: 1.4;
             touch-action: manipulation;
             border-radius: 12px;
+            will-change: transform, box-shadow;
         }
 
         .pixel-btn:hover {
@@ -425,6 +389,16 @@
         .role-badge.admin { background: var(--admin); }
         .role-badge.moderator { background: var(--mod); }
         .role-badge.cerrah { background: var(--surgeon); box-shadow: 0 0 8px var(--surgeon-glow); }
+        .role-badge.black-lung {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            box-shadow: 0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { box-shadow: 0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle); }
+            50% { box-shadow: 0 0 20px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle), 0 0 60px rgba(255, 255, 255, 0.4); }
+        }
         .role-badge.banned { background: var(--ban); }
 
         .nav-tabs {
@@ -454,6 +428,7 @@
             gap: 8px;
             min-height: var(--touch-min);
             min-width: var(--touch-min);
+            will-change: transform, background, border-color, box-shadow;
         }
 
         .nav-tab-icon {
@@ -493,6 +468,7 @@
             min-width: 18px;
             text-align: center;
             animation: pulse 1.5s infinite;
+            will-change: transform;
         }
 
         @keyframes pulse {
@@ -588,6 +564,7 @@
             display: none;
             animation: bounce 2s infinite;
             z-index: 10;
+            will-change: transform;
         }
 
         .auto-scroll-btn.active {
@@ -612,6 +589,7 @@
             transition: transform 0.2s;
             overflow-wrap: anywhere;
             word-break: break-word;
+            will-change: transform, opacity;
         }
 
         .message:hover {
@@ -646,6 +624,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
             overflow: visible;
+            will-change: transform;
         }
 
         .message.own-message .message-bubble {
@@ -850,6 +829,7 @@
             z-index: 999999 !important;
             display: none;
             animation: menuPop 0.2s;
+            will-change: opacity, transform;
         }
 
         .message-menu.active {
@@ -932,6 +912,7 @@
             z-index: 999999 !important;
             display: none;
             animation: menuPop 0.2s;
+            will-change: opacity, transform;
         }
 
         .post-menu.active {
@@ -954,6 +935,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
             z-index: 50;
             animation: emojiPop 0.3s;
+            will-change: opacity, transform;
         }
 
         .emoji-picker.active {
@@ -1330,6 +1312,7 @@
             position: relative;
             animation: slideIn 0.3s;
             border-radius: 16px;
+            will-change: transform, opacity;
         }
 
         .post-item.pinned {
@@ -1619,6 +1602,7 @@
             position: relative;
             border-radius: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
+            will-change: transform, box-shadow;
         }
 
         .news-item.pinned {
@@ -2155,6 +2139,7 @@
             animation: pulse 2s infinite;
             display: none;
             border-radius: 16px;
+            will-change: transform, box-shadow;
         }
 
         .chat-lock-banner.active {
@@ -2189,6 +2174,7 @@
             animation: announcementPulse 2s infinite;
             display: none;
             border-radius: 16px;
+            will-change: transform, box-shadow;
         }
 
         .announcement-banner.active {
@@ -2211,6 +2197,7 @@
         .announcement-icon {
             font-size: 24px;
             animation: bellShake 1s infinite;
+            will-change: transform;
         }
 
         @keyframes bellShake {
@@ -2333,12 +2320,14 @@
             border-top-color: var(--sakura-pink);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            will-change: transform;
         }
 
         .loading-text {
             color: var(--sakura-pink);
             font-size: 12px;
             animation: pulse 1.5s infinite;
+            will-change: opacity, transform;
         }
 
         @keyframes spin {
@@ -2354,6 +2343,7 @@
             border-radius: 10px;
             margin-top: 10px;
             animation: pulse 2s infinite;
+            will-change: transform, opacity;
         }
 
         /* TYPING INDICATOR */
@@ -2369,11 +2359,13 @@
             animation: fadeIn 0.3s;
             width: fit-content;
             align-self: flex-start;
+            will-change: opacity, transform;
         }
         .typing-dots { display: flex; gap: 4px; align-items: center; }
         .typing-dot {
             width: 6px; height: 6px; background: var(--sakura-pink);
             border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out both;
+            will-change: transform, opacity;
         }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
@@ -2390,6 +2382,7 @@
             max-height: 200px; overflow-y: auto; z-index: 100;
             display: none; box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
             margin-bottom: 10px; padding: 8px 0;
+            will-change: opacity, transform;
         }
         .mention-dropdown.active { display: block; animation: mentionPop 0.2s; }
         @keyframes mentionPop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -2454,6 +2447,7 @@
             align-items: center;
             flex-direction: column;
             animation: fadeIn 0.3s;
+            will-change: opacity, transform;
         }
         .lightbox.active { display: flex; }
         .lightbox-img {
@@ -2463,6 +2457,7 @@
             border-radius: 16px;
             box-shadow: 0 0 50px rgba(255,183,197,0.3);
             animation: scaleIn 0.3s;
+            will-change: transform, opacity;
         }
         @keyframes scaleIn {
             from { transform: scale(0.8); opacity: 0; }
@@ -2561,6 +2556,7 @@
             align-items: center;
             flex-direction: column;
             animation: fadeIn 0.5s;
+            will-change: opacity, transform;
         }
         .maintenance-overlay::before {
             content: '';
@@ -2568,6 +2564,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(circle at center, rgba(255,183,197,0.1) 0%, transparent 70%);
             animation: maintenancePulse 3s ease-in-out infinite;
+            will-change: opacity;
         }
         @keyframes maintenancePulse {
             0%, 100% { opacity: 0.3; }
@@ -2588,6 +2585,7 @@
             animation: maintenancePop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             position: relative;
             z-index: 1;
+            will-change: transform, opacity;
         }
         @keyframes maintenancePop {
             from { transform: scale(0.5); opacity: 0; }
@@ -2598,6 +2596,7 @@
             margin-bottom: 20px;
             animation: maintenanceSpin 4s linear infinite;
             display: inline-block;
+            will-change: transform;
         }
         @keyframes maintenanceSpin {
             from { transform: rotate(0deg); }
@@ -2628,6 +2627,7 @@
             background: var(--sakura-pink);
             border-radius: 50%;
             animation: maintenanceBounce 1.4s infinite ease-in-out both;
+            will-change: transform, opacity;
         }
         .maintenance-dot:nth-child(1) { animation-delay: -0.32s; }
         .maintenance-dot:nth-child(2) { animation-delay: -0.16s; }
@@ -2659,6 +2659,7 @@
             gap: 8px;
             min-width: 60px;
             min-height: 50px;
+            will-change: transform, box-shadow;
         }
         .warning-btn:hover {
             transform: scale(1.1);
@@ -2681,6 +2682,7 @@
             border-radius: 20px;
             padding: 30px;
             animation: warningModalPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            will-change: transform, opacity;
         }
         @keyframes warningModalPop {
             from { transform: scale(0.7); opacity: 0; }
@@ -2697,6 +2699,7 @@
             margin-bottom: 15px;
             animation: warningShake 1s infinite;
             display: inline-block;
+            will-change: transform;
         }
         @keyframes warningShake {
             0%, 100% { transform: rotate(0deg); }
@@ -3415,16 +3418,40 @@
             .message-menu {
                 min-width: 160px;
                 border-radius: 16px;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 15px rgba(255, 183, 197, 0.15);
             }
             .message-menu-item {
                 padding: 12px 16px;
                 font-size: 12px;
             }
 
+            /* OPTIMIZE MESSAGE BUBBLE FOR MOBILE */
+            .message-bubble {
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+
             /* POST MENU MOBILE */
             .post-menu {
                 min-width: 160px;
                 border-radius: 16px;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 15px rgba(255, 183, 197, 0.15);
+            }
+
+            /* REDUCE TRANSITION DURATIONS ON MOBILE */
+            .pixel-btn,
+            .nav-tab,
+            .post-action-btn,
+            .news-like-btn,
+            .comment-action,
+            .emoji-btn,
+            .reaction-chip {
+                transition-duration: 0.15s;
             }
 
             /* COMMENT MENU MOBILE */
@@ -3438,6 +3465,9 @@
                 top: -45px;
                 padding: 6px 10px;
                 gap: 6px;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             }
             .emoji-btn {
                 font-size: 20px;
@@ -3655,6 +3685,83 @@
             /* MESSAGE HOVER EFFECT MOBILE */
             .message:hover {
                 transform: none;
+            }
+
+            /* DISABLE HEAVY ANIMATIONS ON MOBILE */
+            .nav-badge {
+                animation: none;
+            }
+            .auto-scroll-btn {
+                animation: none;
+            }
+            .message {
+                animation: none;
+            }
+            .content-section {
+                animation: none;
+            }
+            .post-item {
+                animation: none;
+            }
+            .news-item {
+                transition: none;
+            }
+            .chat-lock-banner {
+                animation: none;
+            }
+            .announcement-banner {
+                animation: none;
+            }
+            .announcement-icon {
+                animation: none;
+            }
+            .loading-spinner {
+                animation: none;
+            }
+            .loading-text {
+                animation: none;
+            }
+            .banned-badge {
+                animation: none;
+            }
+            .typing-indicator {
+                animation: none;
+            }
+            .typing-dot {
+                animation: none;
+            }
+            .mention-dropdown {
+                animation: none;
+            }
+            .lightbox {
+                animation: none;
+            }
+            .lightbox-img {
+                animation: none;
+            }
+            .maintenance-overlay {
+                animation: none;
+            }
+            .maintenance-overlay::before {
+                animation: none;
+            }
+            .maintenance-container {
+                animation: none;
+            }
+            .maintenance-icon {
+                animation: none;
+            }
+            .maintenance-dot {
+                animation: none;
+            }
+            .warning-btn {
+                animation: none;
+            }
+            .warning-modal-content {
+                animation: none;
+            }
+            .warning-modal-icon {
+                animation: none;
             }
 
             /* LONG PRESS INDICATOR MOBILE */
@@ -3884,9 +3991,10 @@
                 border-top: none;
                 border-radius: 0 0 16px 16px;
                 height: 60px;
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
                 background: rgba(45, 27, 46, 0.95);
+                will-change: transform;
             }
 
             .logo {
@@ -3958,10 +4066,11 @@
                 justify-content: space-around;
                 align-items: center;
                 z-index: 100;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.4);
                 gap: 4px;
                 height: auto;
                 min-height: 64px;
+                will-change: transform;
             }
 
             .nav-tab {
@@ -5809,8 +5918,6 @@
 </head>
 <body>
 
-    <div class="sakura-container" id="sakuraContainer"></div>
-
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner"></div>
         <div class="loading-text">Oturum açılıyor...</div>
@@ -6187,6 +6294,7 @@
                             <option value="verified">✓ Onaylı Kullanıcı</option>
                             <option value="moderator">Moderatör</option>
                             <option value="cerrah">🫀 Cerrah</option>
+                            <option value="black-lung">🫁 Black Lung</option>
                             <option value="admin">Admin</option>
                         </select>
                         
@@ -6445,27 +6553,6 @@
             }
         })();
 
-        function createSakura() {
-            const container = document.getElementById('sakuraContainer');
-            const isMobile = window.matchMedia('(max-width: 767px)').matches;
-            const count = isMobile ? 5 : 16;
-            for (let i = 0; i < count; i++) {
-                const sakura = document.createElement('div');
-                sakura.className = 'sakura';
-                sakura.style.left = Math.random() * 100 + '%';
-                sakura.style.animationDuration = (Math.random() * (isMobile ? 5 : 3) + (isMobile ? 4 : 2)) + 's';
-                sakura.style.animationDelay = Math.random() * 5 + 's';
-                sakura.style.opacity = Math.random();
-                container.appendChild(sakura);
-            }
-            document.addEventListener('visibilitychange', function() {
-                const paused = document.hidden ? 'paused' : 'running';
-                container.querySelectorAll('.sakura').forEach(function(el) {
-                    el.style.animationPlayState = paused;
-                });
-            });
-        }
-        createSakura();
 
         function throttle(fn, wait) {
             let last = 0;
@@ -6828,14 +6915,17 @@
 
         function applyHeaderFromUserData() {
             if (!currentUserData) return;
-            document.getElementById('header-username').textContent = (currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
-            document.getElementById('header-username').style.color = currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
-            document.getElementById('header-username').style.textShadow = currentUserData.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : 'none';
+            document.getElementById('header-username').textContent = (currentUserData.role === 'black-lung' ? '🫁 ' : currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
+            document.getElementById('header-username').style.color = currentUserData.role === 'black-lung' ? '#ffffff' : currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('header-username').style.textShadow = currentUserData.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : currentUserData.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : 'none';
             scheduleFitNicknames(document.querySelector('.header-user-meta'));
             const roleEl = document.getElementById('header-role');
-            roleEl.textContent = currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
+            roleEl.textContent = currentUserData.role === 'black-lung' ? '🫁 BLACK LUNG' : currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
             roleEl.className = 'role-badge ' + currentUserData.role;
-            if (currentUserData.role === 'cerrah') {
+            if (currentUserData.role === 'black-lung') {
+                roleEl.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)';
+                roleEl.style.boxShadow = '0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle)';
+            } else if (currentUserData.role === 'cerrah') {
                 roleEl.style.background = 'var(--surgeon)';
                 roleEl.style.boxShadow = '0 0 8px var(--surgeon-glow)';
             } else {
@@ -6851,6 +6941,9 @@
                 } else if (currentUserData.role === 'cerrah') {
                     headerAvatar.style.boxShadow = '0 0 15px var(--surgeon-glow), 0 0 30px var(--surgeon-glow)';
                     headerAvatar.style.borderColor = 'var(--surgeon)';
+                } else if (currentUserData.role === 'black-lung') {
+                    headerAvatar.style.boxShadow = '0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle)';
+                    headerAvatar.style.borderColor = '#ffffff';
                 } else {
                     headerAvatar.style.boxShadow = '';
                     headerAvatar.style.borderColor = '';
@@ -7275,12 +7368,13 @@
                                 ${msg.avatar ? `<img src="${msg.avatar}">` : '👤'}
                             </div>
                             <div class="nickname-slot">
-                                <span class="fit-nickname message-author-name" style="color: ${msg.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)'}; cursor: pointer; text-shadow: ${msg.role === 'cerrah' ? '0 0 8px var(--surgeon-glow), 0 0 15px var(--surgeon-glow)' : 'none'};" onclick="event.stopPropagation(); viewProfile('${msg.uid}')">${msg.role === 'cerrah' ? '🫀 ' : ''}${escapeHtml(msg.username)}</span>
+                                <span class="fit-nickname message-author-name" style="color: ${msg.role === 'black-lung' ? '#ffffff' : msg.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)'}; cursor: pointer; text-shadow: ${msg.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : msg.role === 'cerrah' ? '0 0 8px var(--surgeon-glow), 0 0 15px var(--surgeon-glow)' : 'none'};" onclick="event.stopPropagation(); viewProfile('${msg.uid}')">${msg.role === 'black-lung' ? '🫁 ' : msg.role === 'cerrah' ? '🫀 ' : ''}${escapeHtml(msg.username)}</span>
                             </div>
                             <div class="nickname-badges">
                                 ${msg.role === 'verified' ? '<span class="verified-badge">✓</span>' : ''}
                                 ${msg.role === 'cerrah' ? '<span class="role-badge cerrah">🫀 CERRAH</span>' : ''}
-                                ${msg.role !== 'user' && msg.role !== 'verified' && msg.role !== 'cerrah' ? `<span class="role-badge ${msg.role}">${msg.role.toUpperCase()}</span>` : ''}
+                                ${msg.role === 'black-lung' ? '<span class="role-badge black-lung">🫁 BLACK LUNG</span>' : ''}
+                                ${msg.role !== 'user' && msg.role !== 'verified' && msg.role !== 'cerrah' && msg.role !== 'black-lung' ? `<span class="role-badge ${msg.role}">${msg.role.toUpperCase()}</span>` : ''}
                             </div>
                         </div>
                         <span class="message-time">${timeStr}</span>
@@ -8054,12 +8148,13 @@
                         div.innerHTML = `
                             <div class="online-indicator"></div>
                             <div class="nickname-slot">
-                                <span class="username-${user.role} fit-nickname">${escapeHtml(user.username)}</span>
+                                <span class="username-${user.role} fit-nickname" style="color: ${user.role === 'black-lung' ? '#ffffff' : ''}; text-shadow: ${user.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : 'none'};">${user.role === 'black-lung' ? '🫁 ' : ''}${escapeHtml(user.username)}</span>
                             </div>
                             <div class="nickname-badges">
                                 ${user.role === 'verified' ? '<span class="verified-badge">✓</span>' : ''}
                                 ${user.role === 'cerrah' ? '<span class="role-badge cerrah">🫀</span>' : ''}
-                                ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' ? `<span class="role-badge ${user.role}">${user.role[0].toUpperCase()}</span>` : ''}
+                                ${user.role === 'black-lung' ? '<span class="role-badge black-lung">🫁</span>' : ''}
+                                ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' && user.role !== 'black-lung' ? `<span class="role-badge ${user.role}">${user.role[0].toUpperCase()}</span>` : ''}
                             </div>
                         `;
                         div.onclick = () => viewProfile(user.uid);
@@ -8070,15 +8165,16 @@
                         const drawerDiv = document.createElement('div');
                         drawerDiv.className = 'online-drawer-user';
                         const accent = getUserAccentColor(user.uid);
-                        const nameColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : user.role === 'cerrah' ? 'var(--surgeon)' : 'var(--text-color)';
+                        const nameColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : user.role === 'cerrah' ? 'var(--surgeon)' : user.role === 'black-lung' ? '#ffffff' : 'var(--text-color)';
                         drawerDiv.style.background = accent;
-                        drawerDiv.style.borderColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : 'var(--sakura-pink)';
+                        drawerDiv.style.borderColor = user.role === 'admin' ? 'var(--admin)' : user.role === 'moderator' ? 'var(--mod-orange)' : user.role === 'cerrah' ? 'var(--surgeon)' : user.role === 'black-lung' ? '#ffffff' : 'var(--sakura-pink)';
                         drawerDiv.innerHTML = `
                             <div class="online-indicator"></div>
                             <div class="nickname-slot" style="flex-direction: column; align-items: flex-start;">
-                                <div class="online-drawer-name fit-nickname" style="color: ${nameColor};">${escapeHtml(user.username)}</div>
-                                ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' ? `<div class="online-drawer-role">${user.role.toUpperCase()}</div>` : ''}
+                                <div class="online-drawer-name fit-nickname" style="color: ${nameColor}; text-shadow: ${user.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : 'none'};">${user.role === 'black-lung' ? '🫁 ' : ''}${escapeHtml(user.username)}</div>
+                                ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' && user.role !== 'black-lung' ? `<div class="online-drawer-role">${user.role.toUpperCase()}</div>` : ''}
                                 ${user.role === 'cerrah' ? '<div class="online-drawer-role">🫀 CERRAH</div>' : ''}
+                                ${user.role === 'black-lung' ? '<div class="online-drawer-role">🫁 BLACK LUNG</div>' : ''}
                                 ${user.role === 'verified' ? '<div class="online-drawer-role">✓ Onaylı</div>' : ''}
                             </div>
                         `;
@@ -8125,13 +8221,13 @@
             viewingUserId = uid;
             viewingUserData = user;
 
-            document.getElementById('view-username').textContent = (user.role === 'cerrah' ? '🫀 ' : '') + user.username;
-            document.getElementById('view-username').style.color = user.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)';
-            document.getElementById('view-username').style.textShadow = user.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
+            document.getElementById('view-username').textContent = (user.role === 'black-lung' ? '🫁 ' : user.role === 'cerrah' ? '🫀 ' : '') + user.username;
+            document.getElementById('view-username').style.color = user.role === 'black-lung' ? '#ffffff' : user.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)';
+            document.getElementById('view-username').style.textShadow = user.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : user.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
             scheduleFitNicknames(document.getElementById('view-profile-content'));
-            document.getElementById('view-role').textContent = user.role === 'cerrah' ? '🫀 CERRAH' : user.role.toUpperCase();
-            document.getElementById('view-role').style.background = user.role === 'cerrah' ? 'var(--surgeon)' : '';
-            document.getElementById('view-role').style.boxShadow = user.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : '';
+            document.getElementById('view-role').textContent = user.role === 'black-lung' ? '🫁 BLACK LUNG' : user.role === 'cerrah' ? '🫀 CERRAH' : user.role.toUpperCase();
+            document.getElementById('view-role').style.background = user.role === 'black-lung' ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)' : user.role === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('view-role').style.boxShadow = user.role === 'black-lung' ? '0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle)' : user.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : '';
 
             // Onaylı kullanıcı badge
             const verifiedBadge = document.getElementById('view-verified-badge');
@@ -9110,12 +9206,15 @@
         }
 
         function openProfile() {
-            document.getElementById('profile-modal-username').textContent = (currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
-            document.getElementById('profile-modal-username').style.color = currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
-            document.getElementById('profile-modal-username').style.textShadow = currentUserData.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
-            document.getElementById('profile-modal-role').textContent = currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
+            document.getElementById('profile-modal-username').textContent = (currentUserData.role === 'black-lung' ? '🫁 ' : currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
+            document.getElementById('profile-modal-username').style.color = currentUserData.role === 'black-lung' ? '#ffffff' : currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('profile-modal-username').style.textShadow = currentUserData.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : currentUserData.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
+            document.getElementById('profile-modal-role').textContent = currentUserData.role === 'black-lung' ? '🫁 BLACK LUNG' : currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
             document.getElementById('profile-modal-role').className = 'profile-modal-role role-badge ' + currentUserData.role;
-            if (currentUserData.role === 'cerrah') {
+            if (currentUserData.role === 'black-lung') {
+                document.getElementById('profile-modal-role').style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)';
+                document.getElementById('profile-modal-role').style.boxShadow = '0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle)';
+            } else if (currentUserData.role === 'cerrah') {
                 document.getElementById('profile-modal-role').style.background = 'var(--surgeon)';
                 document.getElementById('profile-modal-role').style.boxShadow = '0 0 8px var(--surgeon-glow)';
             } else {
@@ -10178,27 +10277,14 @@
             }
             const menu = document.getElementById('dm-menu-' + msgId);
             const btn = document.querySelector('#dm-msg-' + msgId + ' .message-menu-btn');
-            if (menu && btn) {
-                const rect = btn.getBoundingClientRect();
-                let top = rect.bottom + 5;
-                let left = rect.left - 140;
-                if (left < 10) left = 10;
-                if (left + 160 > window.innerWidth) left = window.innerWidth - 170;
-                if (top + 150 > window.innerHeight) top = rect.top - 155;
-                menu.style.top = top + 'px';
-                menu.style.left = left + 'px';
-                menu.style.position = 'fixed';
-                menu.classList.toggle('active');
-                activeMessageMenu = menu.classList.contains('active') ? msgId : null;
-            }
+            if (!menu || !btn) return;
+            const opened = togglePopupMenu(menu, btn, false);
+            activeMessageMenu = opened ? msgId : null;
         }
 
         function hideDMMessageMenu(msgId) {
-            const menu = document.getElementById('dm-menu-' + msgId);
-            if (menu) {
-                menu.classList.remove('active');
-                if (activeMessageMenu === msgId) activeMessageMenu = null;
-            }
+            closePopupMenu(document.getElementById('dm-menu-' + msgId));
+            if (activeMessageMenu === msgId) activeMessageMenu = null;
         }
 
         function updateDMMessage(msgId, msg) {
@@ -10737,11 +10823,10 @@
             container.innerHTML = '';
             lastDMDate = null;
 
-            // Eski listener'ları kapat
+            // Eski listener'ları tamamen kapat
             if (dmMessagesListener) {
-                dmMessagesListener.off('child_added');
-                dmMessagesListener.off('child_changed');
-                dmMessagesListener.off('child_removed');
+                dmMessagesListener.off();
+                dmMessagesListener = null;
             }
 
             const conversationRef = db.ref('dmMessages/' + currentDMConversationId);
@@ -10844,7 +10929,7 @@
                     <div class="long-press-indicator"></div>
                     <div class="message-header dm-msg-header" style="margin-bottom: 6px; padding-right: 20px;">
                         <div class="nickname-slot">
-                            <span class="fit-nickname dm-msg-author message-author-name">${escapeHtml(msg.username)}</span>
+                            <span class="fit-nickname dm-msg-author message-author-name" style="color: ${msg.role === 'black-lung' ? '#ffffff' : 'var(--sakura-pink)'}; text-shadow: ${msg.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : 'none'};">${msg.role === 'black-lung' ? '🫁 ' : ''}${escapeHtml(msg.username)}</span>
                         </div>
                         <span class="message-time">${timeStr}${msg.edited ? ' <span style="font-size:7px;color:#888;">(düzenlendi)</span>' : ''}</span>
                     </div>
