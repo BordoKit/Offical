@@ -6915,12 +6915,12 @@
 
         function applyHeaderFromUserData() {
             if (!currentUserData) return;
-            document.getElementById('header-username').textContent = (currentUserData.role === 'black-lung' ? '🫁 ' : currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
+            document.getElementById('header-username').textContent = (currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
             document.getElementById('header-username').style.color = currentUserData.role === 'black-lung' ? '#ffffff' : currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
-            document.getElementById('header-username').style.textShadow = currentUserData.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : currentUserData.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : 'none';
+            document.getElementById('header-username').style.textShadow = currentUserData.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : currentUserData.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : 'none';
             scheduleFitNicknames(document.querySelector('.header-user-meta'));
             const roleEl = document.getElementById('header-role');
-            roleEl.textContent = currentUserData.role === 'black-lung' ? '🫁 BLACK LUNG' : currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
+            roleEl.textContent = currentUserData.role === 'black-lung' ? 'BLACK LUNG' : currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
             roleEl.className = 'role-badge ' + currentUserData.role;
             if (currentUserData.role === 'black-lung') {
                 roleEl.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)';
@@ -7368,12 +7368,12 @@
                                 ${msg.avatar ? `<img src="${msg.avatar}">` : '👤'}
                             </div>
                             <div class="nickname-slot">
-                                <span class="fit-nickname message-author-name" style="color: ${msg.role === 'black-lung' ? '#ffffff' : msg.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)'}; cursor: pointer; text-shadow: ${msg.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : msg.role === 'cerrah' ? '0 0 8px var(--surgeon-glow), 0 0 15px var(--surgeon-glow)' : 'none'};" onclick="event.stopPropagation(); viewProfile('${msg.uid}')">${msg.role === 'black-lung' ? '🫁 ' : msg.role === 'cerrah' ? '🫀 ' : ''}${escapeHtml(msg.username)}</span>
+                                <span class="fit-nickname message-author-name" style="color: ${msg.role === 'black-lung' ? '#ffffff' : msg.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)'}; cursor: pointer; text-shadow: ${msg.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : msg.role === 'cerrah' ? '0 0 8px var(--surgeon-glow), 0 0 15px var(--surgeon-glow)' : 'none'};" onclick="event.stopPropagation(); viewProfile('${msg.uid}')">${msg.role === 'cerrah' ? '🫀 ' : ''}${escapeHtml(msg.username)}</span>
                             </div>
                             <div class="nickname-badges">
                                 ${msg.role === 'verified' ? '<span class="verified-badge">✓</span>' : ''}
                                 ${msg.role === 'cerrah' ? '<span class="role-badge cerrah">🫀 CERRAH</span>' : ''}
-                                ${msg.role === 'black-lung' ? '<span class="role-badge black-lung">🫁 BLACK LUNG</span>' : ''}
+                                ${msg.role === 'black-lung' ? '<span class="role-badge black-lung">BLACK LUNG</span>' : ''}
                                 ${msg.role !== 'user' && msg.role !== 'verified' && msg.role !== 'cerrah' && msg.role !== 'black-lung' ? `<span class="role-badge ${msg.role}">${msg.role.toUpperCase()}</span>` : ''}
                             </div>
                         </div>
@@ -8148,12 +8148,12 @@
                         div.innerHTML = `
                             <div class="online-indicator"></div>
                             <div class="nickname-slot">
-                                <span class="username-${user.role} fit-nickname" style="color: ${user.role === 'black-lung' ? '#ffffff' : ''}; text-shadow: ${user.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : 'none'};">${user.role === 'black-lung' ? '🫁 ' : ''}${escapeHtml(user.username)}</span>
+                                <span class="username-${user.role} fit-nickname" style="color: ${user.role === 'black-lung' ? '#ffffff' : ''}; text-shadow: ${user.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : 'none'};">${escapeHtml(user.username)}</span>
                             </div>
                             <div class="nickname-badges">
                                 ${user.role === 'verified' ? '<span class="verified-badge">✓</span>' : ''}
                                 ${user.role === 'cerrah' ? '<span class="role-badge cerrah">🫀</span>' : ''}
-                                ${user.role === 'black-lung' ? '<span class="role-badge black-lung">🫁</span>' : ''}
+                                ${user.role === 'black-lung' ? '<span class="role-badge black-lung">B</span>' : ''}
                                 ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' && user.role !== 'black-lung' ? `<span class="role-badge ${user.role}">${user.role[0].toUpperCase()}</span>` : ''}
                             </div>
                         `;
@@ -8171,10 +8171,10 @@
                         drawerDiv.innerHTML = `
                             <div class="online-indicator"></div>
                             <div class="nickname-slot" style="flex-direction: column; align-items: flex-start;">
-                                <div class="online-drawer-name fit-nickname" style="color: ${nameColor}; text-shadow: ${user.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : 'none'};">${user.role === 'black-lung' ? '🫁 ' : ''}${escapeHtml(user.username)}</div>
+                                <div class="online-drawer-name fit-nickname" style="color: ${nameColor}; text-shadow: ${user.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : 'none'};">${escapeHtml(user.username)}</div>
                                 ${user.role !== 'user' && user.role !== 'verified' && user.role !== 'cerrah' && user.role !== 'black-lung' ? `<div class="online-drawer-role">${user.role.toUpperCase()}</div>` : ''}
                                 ${user.role === 'cerrah' ? '<div class="online-drawer-role">🫀 CERRAH</div>' : ''}
-                                ${user.role === 'black-lung' ? '<div class="online-drawer-role">🫁 BLACK LUNG</div>' : ''}
+                                ${user.role === 'black-lung' ? '<div class="online-drawer-role">B</div>' : ''}
                                 ${user.role === 'verified' ? '<div class="online-drawer-role">✓ Onaylı</div>' : ''}
                             </div>
                         `;
@@ -8221,11 +8221,11 @@
             viewingUserId = uid;
             viewingUserData = user;
 
-            document.getElementById('view-username').textContent = (user.role === 'black-lung' ? '🫁 ' : user.role === 'cerrah' ? '🫀 ' : '') + user.username;
+            document.getElementById('view-username').textContent = (user.role === 'cerrah' ? '🫀 ' : '') + user.username;
             document.getElementById('view-username').style.color = user.role === 'black-lung' ? '#ffffff' : user.role === 'cerrah' ? 'var(--surgeon)' : 'var(--sakura-pink)';
-            document.getElementById('view-username').style.textShadow = user.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : user.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
+            document.getElementById('view-username').style.textShadow = user.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : user.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
             scheduleFitNicknames(document.getElementById('view-profile-content'));
-            document.getElementById('view-role').textContent = user.role === 'black-lung' ? '🫁 BLACK LUNG' : user.role === 'cerrah' ? '🫀 CERRAH' : user.role.toUpperCase();
+            document.getElementById('view-role').textContent = user.role === 'black-lung' ? 'BLACK LUNG' : user.role === 'cerrah' ? '🫀 CERRAH' : user.role.toUpperCase();
             document.getElementById('view-role').style.background = user.role === 'black-lung' ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)' : user.role === 'cerrah' ? 'var(--surgeon)' : '';
             document.getElementById('view-role').style.boxShadow = user.role === 'black-lung' ? '0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle)' : user.role === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : '';
 
@@ -9206,10 +9206,10 @@
         }
 
         function openProfile() {
-            document.getElementById('profile-modal-username').textContent = (currentUserData.role === 'black-lung' ? '🫁 ' : currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
+            document.getElementById('profile-modal-username').textContent = (currentUserData.role === 'cerrah' ? '🫀 ' : '') + currentUserData.username;
             document.getElementById('profile-modal-username').style.color = currentUserData.role === 'black-lung' ? '#ffffff' : currentUserData.role === 'cerrah' ? 'var(--surgeon)' : '';
-            document.getElementById('profile-modal-username').style.textShadow = currentUserData.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : currentUserData.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
-            document.getElementById('profile-modal-role').textContent = currentUserData.role === 'black-lung' ? '🫁 BLACK LUNG' : currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
+            document.getElementById('profile-modal-username').style.textShadow = currentUserData.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : currentUserData.role === 'cerrah' ? '0 0 10px var(--surgeon-glow), 0 0 20px var(--surgeon-glow)' : 'none';
+            document.getElementById('profile-modal-role').textContent = currentUserData.role === 'black-lung' ? 'BLACK LUNG' : currentUserData.role === 'cerrah' ? '🫀 CERRAH' : currentUserData.role.toUpperCase();
             document.getElementById('profile-modal-role').className = 'profile-modal-role role-badge ' + currentUserData.role;
             if (currentUserData.role === 'black-lung') {
                 document.getElementById('profile-modal-role').style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)';
@@ -10929,7 +10929,7 @@
                     <div class="long-press-indicator"></div>
                     <div class="message-header dm-msg-header" style="margin-bottom: 6px; padding-right: 20px;">
                         <div class="nickname-slot">
-                            <span class="fit-nickname dm-msg-author message-author-name" style="color: ${msg.role === 'black-lung' ? '#ffffff' : 'var(--sakura-pink)'}; text-shadow: ${msg.role === 'black-lung' ? '0 0 10px var(--black-lung-glow), 0 0 20px var(--black-lung-sparkle)' : 'none'};">${msg.role === 'black-lung' ? '🫁 ' : ''}${escapeHtml(msg.username)}</span>
+                            <span class="fit-nickname dm-msg-author message-author-name" style="color: ${msg.role === 'black-lung' ? '#ffffff' : 'var(--sakura-pink)'}; text-shadow: ${msg.role === 'black-lung' ? '0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px var(--black-lung-glow), 0 0 40px var(--black-lung-sparkle)' : 'none'};">${escapeHtml(msg.username)}</span>
                         </div>
                         <span class="message-time">${timeStr}${msg.edited ? ' <span style="font-size:7px;color:#888;">(düzenlendi)</span>' : ''}</span>
                     </div>
