@@ -3,367 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BORDOKİT | Yenileniyor</title>
+    <title>Önemli Duyuru | BordoDev Studios</title>
+
+    <!-- Google Fonts: Playfair Display (başlık için serif) ve Inter (gövde metni için sans-serif) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --neon-pink: #ff2bd6;
-            --deep-red: #ff3b3b;
-            --bg-black: #030303;
-            --text-white: #f0f0f0;
-            --text-gray: #b0b0b0;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
-        * {
+    <style>
+        /* ============================================
+           RESET & TEMEL AYARLAR
+           ============================================ */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            /* Sayfa yüksekliğini her zaman tam ekran yapar */
+            height: 100%;
+            /* Yumuşak kaydırma */
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', 'Poppins', sans-serif;
-            background: var(--bg-black);
-            color: var(--text-white);
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
+            min-height: 100vh;
+            /* Koyu gradient arka plan: Siyah -> Koyu Gri -> Lacivert tonları */
+            background: linear-gradient(135deg, #050505 0%, #0f172a 50%, #1e1b4b 100%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            /* İçeriği ortalamak için flex kullanımı */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            /* Parçacık canvas'ının altında kalmasını sağlar */
             position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Sinematik Background */
-        .bg-gradient {
+        /* ============================================
+           ARKA PLAN PARÇACIK CANVASI
+           ============================================ */
+        #particle-canvas {
             position: fixed;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse at 30% 40%, rgba(255, 43, 214, 0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 60%, rgba(255, 59, 59, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, #080808 0%, #000000 100%);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 0;
-            animation: bgPulse 6s ease-in-out infinite;
-        }
-
-        @keyframes bgPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
-        }
-
-        /* Grain Overlay */
-        .noise-overlay {
-            position: fixed;
-            inset: -50%;
-            width: 200%;
-            height: 200%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
-            z-index: 1;
-            pointer-events: none;
-            animation: noiseMove 0.4s steps(5) infinite;
-        }
-
-        @keyframes noiseMove {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-4%, -4%); }
-            50% { transform: translate(-8%, 4%); }
-            75% { transform: translate(4%, -8%); }
-            100% { transform: translate(0, 0); }
-        }
-
-        /* Particles */
-        #particleCanvas {
-            position: fixed;
-            inset: 0;
-            z-index: 2;
+            /* Çok düşük opaklıkla dikkat dağıtmaz */
+            opacity: 0.35;
             pointer-events: none;
         }
 
-        /* Main Container */
-        .main-container {
+        /* ============================================
+           ANA KAPSAYICI
+           ============================================ */
+        .container {
             position: relative;
-            z-index: 10;
-            text-align: center;
+            z-index: 1;
+            width: 100%;
             max-width: 800px;
             padding: 2rem;
-            animation: containerFloat 5s ease-in-out infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        @keyframes containerFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-
-        /* Glass Panel */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.015);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 28px;
+        /* ============================================
+           DUYURU KARTI (Glassmorphism)
+           ============================================ */
+        .announcement-card {
+            /* Cam efekti için yarı saydam arka plan */
+            background: rgba(255, 255, 255, 0.03);
+            /* Arka planı blurlama efekti */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            /* Hafif kenarlık ve gölge */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
             padding: 3.5rem 3rem;
+            width: 100%;
+            /* İç gölge derinlik hissi verir */
             box-shadow: 
-                0 0 100px rgba(255, 43, 214, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.04);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-panel::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            background: linear-gradient(45deg, transparent, rgba(255, 43, 214, 0.08), transparent);
-            border-radius: 28px;
-            z-index: -1;
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            /* Giriş animasyonu */
+            animation: fadeInScale 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             opacity: 0;
-            animation: borderGlow 3s ease-in-out infinite;
+            transform: scale(0.95);
+            text-align: center;
         }
 
-        @keyframes borderGlow {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
+        /* ============================================
+           BAŞLIK STİLLERİ
+           ============================================ */
+        .announcement-header {
+            margin-bottom: 2.5rem;
+            position: relative;
         }
 
-        /* Title */
-        .title {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 900;
-            letter-spacing: 0.12em;
-            color: var(--neon-pink);
-            text-shadow: 
-                0 0 10px rgba(255, 43, 214, 0.6),
-                0 0 40px rgba(255, 43, 214, 0.3),
-                0 0 80px rgba(255, 43, 214, 0.15);
-            margin-bottom: 2rem;
-            animation: titleFlicker 2.5s infinite alternate, fadeInUp 0.6s ease-out forwards;
+        /* Dekoratif üst çizgi */
+        .announcement-header::before {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.5), transparent);
+            margin: 0 auto 1.5rem;
+            border-radius: 2px;
+        }
+
+        .announcement-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            /* Hafif alt gölge derinlik için */
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        /* ============================================
+           DUYURU METNİ
+           ============================================ */
+        .announcement-body {
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            font-weight: 300;
+            color: #cbd5e1;
+            line-height: 2;
+            max-width: 640px;
+            margin: 0 auto;
+            text-align: center;
+            white-space: pre-line;
+        }
+
+        /* Vurgulanmış isim */
+        .highlight-name {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           ALT İMZA
+           ============================================ */
+        .signature {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+
+        /* ============================================
+           ANİMASYON TANIMLARI
+           ============================================ */
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes titleFlicker {
-            0%, 19%, 21%, 23%, 54%, 56%, 100% {
-                text-shadow: 
-                    0 0 10px rgba(255, 43, 214, 0.6),
-                    0 0 40px rgba(255, 43, 214, 0.3),
-                    0 0 80px rgba(255, 43, 214, 0.15);
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
                 opacity: 1;
-            }
-            20%, 22%, 55% {
-                text-shadow: 0 0 5px rgba(255, 43, 214, 0.3);
-                opacity: 0.85;
+                transform: translateY(0);
             }
         }
 
-        /* Divider */
-        .divider {
-            width: 50px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
-            margin: 0 auto 2rem;
-            animation: expandWidth 0.6s ease-out 0.3s forwards;
-            transform: scaleX(0);
-            opacity: 0.7;
+        /* ============================================
+           RESPONSIVE AYARLAR
+           ============================================ */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .announcement-card {
+                padding: 2.5rem 1.75rem;
+                border-radius: 20px;
+            }
+
+            .announcement-header {
+                margin-bottom: 2rem;
+            }
+
+            .announcement-body {
+                line-height: 1.85;
+            }
+
+            .signature {
+                margin-top: 2.5rem;
+            }
         }
 
-        @keyframes expandWidth {
-            to { transform: scaleX(1); }
+        @media (max-width: 380px) {
+            .announcement-card {
+                padding: 2rem 1.25rem;
+            }
         }
 
-        /* Message */
-        .message {
-            font-family: 'Inter', sans-serif;
-            font-size: clamp(1rem, 2.5vw, 1.25rem);
-            font-weight: 300;
-            line-height: 2;
-            color: var(--text-gray);
-            letter-spacing: 0.02em;
+        /* Yüksek çözünürlüklü ekranlar için iyileştirme */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 900px;
+            }
         }
-
-        .message .line {
-            display: block;
-            opacity: 0;
-            transform: translateY(15px);
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-
-        .message .line:nth-child(1) { animation-delay: 0.5s; }
-        .message .line:nth-child(2) { animation-delay: 0.8s; }
-        .message .line:nth-child(3) { animation-delay: 1.1s; }
-
-        .highlight-date {
-            color: var(--neon-pink);
-            font-weight: 600;
-            text-shadow: 0 0 20px rgba(255, 43, 214, 0.4);
-        }
-
-        /* Loading Dots */
-        .loading-dots {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            opacity: 0;
-            animation: fadeIn 0.4s ease-out 1.4s forwards;
-        }
-
-        .dot {
-            width: 5px;
-            height: 5px;
-            background: var(--neon-pink);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--neon-pink);
-            animation: dotPulse 1.2s ease-in-out infinite;
-        }
-
-        .dot:nth-child(2) { animation-delay: 0.15s; }
-        .dot:nth-child(3) { animation-delay: 0.3s; }
-
-        @keyframes dotPulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.4); opacity: 1; }
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        /* Bottom Right */
-        .bottom-text {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--deep-red);
-            text-shadow: 
-                0 0 10px rgba(255, 59, 59, 0.5),
-                0 0 25px rgba(255, 59, 59, 0.2);
-            z-index: 10;
-            animation: bottomGlow 2s ease-in-out infinite, fadeIn 0.6s ease-out 1.6s forwards;
-            opacity: 0;
-            letter-spacing: 0.04em;
-        }
-
-        @keyframes bottomGlow {
-            0%, 100% { opacity: 0.85; }
-            50% { opacity: 1; text-shadow: 0 0 15px rgba(255, 59, 59, 0.8), 0 0 35px rgba(255, 59, 59, 0.4); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .glass-panel { padding: 2.5rem 1.5rem; margin: 1rem; }
-            .main-container { padding: 1rem; }
-            .bottom-text { font-size: 0.75rem; bottom: 1rem; right: 1rem; }
-            .message { line-height: 1.8; }
-        }
-
-        @media (max-width: 480px) {
-            .glass-panel { padding: 2rem 1.25rem; }
-            .bottom-text { font-size: 0.7rem; }
-        }
-
-        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
+    <!-- Arka plan parçacık animasyonu canvas'ı -->
+    <canvas id="particle-canvas"></canvas>
 
-    <div class="bg-gradient"></div>
-    <div class="noise-overlay"></div>
-    <canvas id="particleCanvas"></canvas>
+    <!-- Ana içerik kapsayıcısı -->
+    <main class="container">
+        <!-- Duyuru kartı: Glassmorphism efekti -->
+        <article class="announcement-card" role="article" aria-label="Önemli Duyuru">
+            <header class="announcement-header">
+                <h1 class="announcement-title">Önemli Duyuru</h1>
+            </header>
 
-    <div class="main-container">
-        <div class="glass-panel">
-            <h1 class="title">BORDOKİT</h1>
-            <div class="divider"></div>
-            
-            <div class="message">
-                <span class="line">Sitemiz şuan titizlikle yenileniyor..</span>
-                <span class="line">Yeni sunucular bağlıyoruz, yeni güncellemeler ekliyoruz.</span>
-                <span class="line"><span class="highlight-date">21 Haziran</span> akşamı tekrar açılacaktır.</span>
-            </div>
+            <section class="announcement-body">
+Değerli topluluk üyelerimiz,
 
-            <div class="loading-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-        </div>
-    </div>
+<span class="highlight-name">Bordo</span> kardeşimizin geçirdiği sağlık problemi nedeniyle site yönetimi geçici olarak tarafımızca devralınmıştır.
 
-    <div class="bottom-text">İyi çalışmalar cerrah 🫀💐..</div>
+Kendisinin sağlığına kavuşup aramıza dönmesine kadar site hizmete açılmayacaktır. Aynı şekilde <span class="highlight-name">Bordo</span>'nun yönetiminde bulunan tüm kanal ve gruplar da geçici süreyle dondurulmuştur.
 
+Bu süreçte anlayışınız ve dualarınız bizler için büyük önem taşımaktadır. En kısa zamanda güzel haberlerle yeniden buluşmayı temenni ediyoruz.
+
+Saygılarımızla.
+            </section>
+        </article>
+
+        <!-- Alt imza -->
+        <footer class="signature">
+            BordoDev Studios
+        </footer>
+    </main>
+
+    <!-- ============================================
+         PARÇACIK ANİMASYONU JAVASCRIPT
+         ============================================ -->
     <script>
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        const particleCount = 40;
+        /**
+         * Düşük opaklıklı, dikkat dağıtmayan parçacık animasyonu.
+         * Canvas üzerinde yavaş hareket eden, birbirine bağlı noktalar çizer.
+         */
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+            // Parçacık sayısı (düşük tutularak dikkat dağıtılmaz)
+            const PARTICLE_COUNT = 35;
+            const CONNECTION_DISTANCE = 120;
+            const MAX_CONNECTIONS = 3;
 
-        class Particle {
-            constructor() {
-                this.reset();
+            let particles = [];
+            let width, height;
+            let animationId;
+
+            // Canvas boyutlarını pencereye göre ayarla
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
             }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.25;
-                this.speedY = (Math.random() - 0.5) * 0.25;
-                this.opacity = Math.random() * 0.4 + 0.1;
-                this.color = Math.random() > 0.5 ? '255, 43, 214' : '255, 59, 59';
-                this.life = 0;
-                this.maxLife = Math.random() * 150 + 80;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life++;
-                if (this.life >= this.maxLife || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+
+            // Tek bir parçacık nesnesi
+            class Particle {
+                constructor() {
                     this.reset();
                 }
+
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    // Çok yavaş hareket (duygusal atmosfer için)
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.radius = Math.random() * 1.5 + 0.5;
+                    this.opacity = Math.random() * 0.3 + 0.1;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Kenarlardan yumuşak dönüş
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(148, 163, 184, ${this.opacity})`;
+                    ctx.fill();
+                }
             }
-            draw() {
-                const lifeRatio = 1 - (this.life / this.maxLife);
-                const currentOpacity = this.opacity * lifeRatio;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${this.color}, ${currentOpacity})`;
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${this.color}, ${currentOpacity * 0.15})`;
-                ctx.fill();
+
+            // Parçacıkları başlat
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push(new Particle());
+                }
             }
-        }
 
-        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+            // İki parçacık arası çizgi çiz
+            function drawConnections() {
+                for (let i = 0; i < particles.length; i++) {
+                    let connections = 0;
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
+                        if (distance < CONNECTION_DISTANCE && connections < MAX_CONNECTIONS) {
+                            const opacity = (1 - distance / CONNECTION_DISTANCE) * 0.08;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(148, 163, 184, ${opacity})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                            connections++;
+                        }
+                    }
+                }
+            }
 
-        /* Subtle mouse parallax */
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 8;
-            const y = (e.clientY / window.innerHeight - 0.5) * 8;
-            document.querySelector('.glass-panel').style.transform = `translate(${x}px, ${y}px)`;
-        });
+            // Animasyon döngüsü
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                // Parçacıkları güncelle ve çiz
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+
+                // Birbirine yakın parçacıkları bağla
+                drawConnections();
+
+                animationId = requestAnimationFrame(animate);
+            }
+
+            // Olay dinleyicileri
+            window.addEventListener('resize', () => {
+                resize();
+                initParticles();
+            });
+
+            // Başlat
+            resize();
+            initParticles();
+            animate();
+        })();
     </script>
 </body>
 </html>
