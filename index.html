@@ -1051,9 +1051,8 @@ textarea.post-composer-input {
 
 .messages-area::before,
 .dm-chat-messages::before {
-    content: '';
-    flex: 1 1 auto;
-    min-height: 0;
+    display: none;
+
 }
 
 /* ============================================
@@ -5973,14 +5972,6 @@ textarea {
             <div style="font-size: 10px; margin-top: 10px; color: #ffcccc;">Sadece yetkililer mesaj gönderebilir</div>
         </div>
 
-        <div class="announcement-banner" id="announcement-banner">
-            <div class="announcement-content">
-                <span class="announcement-icon">📢</span>
-                <span class="announcement-text" id="announcement-text">Duyuru mesajı burada görünecek...</span>
-                <button class="announcement-close" onclick="closeAnnouncement()">✕ KAPAT</button>
-            </div>
-        </div>
-
         <div class="header">
             <div class="logo">🌸 BORDOKIT</div>
             <div class="notification-bell" id="notification-bell" onclick="toggleNotificationPanel()">
@@ -6296,7 +6287,6 @@ textarea {
                     <div class="profile-admin-section">
                         <div class="profile-admin-title">🔧 Admin Paneli</div>
                         <div class="profile-admin-grid">
-                            <button class="pixel-btn announcement-admin-btn" onclick="openAnnouncementModal()">📢 Duyuru</button>
                             <button class="pixel-btn ban" onclick="toggleChatLock()">🔒 Chat Kilidi</button>
                             <button class="pixel-btn ban" onclick="togglePostLock()" id="post-lock-btn">📝 Gönderi Kilidi</button>
                             <button class="pixel-btn ban" onclick="confirmResetChat()">🗑️ Chat Sil</button>
@@ -6305,6 +6295,7 @@ textarea {
                             <button class="pixel-btn" style="grid-column: span 2; background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%); color: white;" onclick="openReportsModal()">🚩 Bildirimler</button>
                             <button class="pixel-btn" onclick="toggleMaintenanceMode()" id="maintenance-btn" style="background: var(--online); color: black; box-shadow: 4px 4px 0 #006400;">🔧 Bakım: KAPALI</button>
                             <button class="pixel-btn" onclick="openAdminNotificationModal()" style="background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%); color: white; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5), 0 0 30px rgba(255, 0, 0, 0.3); animation: pulse 2s infinite;">🔴 Sistem Bildirimi</button>
+                            <button class="pixel-btn" onclick="openSecurityCenter()" style="grid-column: span 2; background: linear-gradient(135deg, #8b0000 0%, #ff0000 100%); color: white; box-shadow: 0 0 15px rgba(139, 0, 0, 0.5), 0 0 30px rgba(139, 0, 0, 0.3);">🔒 Güvenlik Merkezi</button>
                         </div>
                         
                         <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.2);">
@@ -6449,29 +6440,6 @@ textarea {
             <div id="users-list-container" style="max-height: 60vh; overflow-y: auto;">
                 <div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>
             </div>
-        </div>
-    </div>
-
-    <div class="modal" id="announcement-modal" style="z-index: 1000;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">📢 Duyuru Yap</div>
-                <button class="close-btn" onclick="closeModal('announcement-modal')">✕</button>
-            </div>
-
-            <div class="form-group">
-                <label>Duyuru Mesajı</label>
-                <textarea class="pixel-input" id="announcement-message" rows="3" placeholder="Tüm kullanıcılara gönderilecek duyuru mesajını yazın..." maxlength="200"></textarea>
-                <div class="url-input-hint">💡 Bu duyuru tüm kullanıcılara anasayfada gösterilecektir.</div>
-            </div>
-
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" id="announcement-persistent" style="width: auto;"> Kalıcı Duyuru (Kullanıcı kapatana kadar görünür)
-                </label>
-            </div>
-
-            <button class="pixel-btn announcement-admin-btn" onclick="publishAnnouncement()">📢 Duyuruyu Yayınla</button>
         </div>
     </div>
 
@@ -6637,6 +6605,76 @@ textarea {
         </div>
     </div>
 
+    <!-- ===== GÜVENLİK MERKEZİ MODALI ===== -->
+    <div class="modal" id="security-center-modal" style="z-index: 1400;">
+        <div class="modal-content" style="max-width: 1200px; max-height: 90vh;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: var(--admin); text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);">🔒 Güvenlik Merkezi</div>
+                <button class="close-btn" onclick="closeModal('security-center-modal')">✕</button>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <button class="pixel-btn secondary" style="width: auto; font-size: 10px;" onclick="loadSecurityData()">🔄 Yenile</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; max-height: 75vh; overflow-y: auto;">
+                <!-- Tüm Kullanıcılar -->
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="font-family: 'Press Start 2P', cursive; font-size: 10px; color: var(--sakura-pink); margin-bottom: 15px;">👥 TÜM KULLANICILAR</div>
+                    <div id="security-users-list" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- IP Banlar -->
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="font-family: 'Press Start 2P', cursive; font-size: 10px; color: var(--admin); margin-bottom: 15px;">🚫 IP BANLARI</div>
+                    <div id="security-ipbans-list" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- Device Banlar -->
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="font-family: 'Press Start 2P', cursive; font-size: 10px; color: var(--admin); margin-bottom: 15px;">📱 DEVICE BANLARI</div>
+                    <div id="security-devicebans-list" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- Güvenlik Logları -->
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="font-family: 'Press Start 2P', cursive; font-size: 10px; color: #ff9500; margin-bottom: 15px;">📋 GÜVENLİK LOGLARI</div>
+                    <div id="security-logs-list" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== KULLANICI GÜVENLİK İŞLEMLERİ MODALI ===== -->
+    <div class="modal" id="security-user-actions-modal" style="z-index: 1450;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: var(--admin);">🔒 Güvenlik İşlemleri</div>
+                <button class="close-btn" onclick="closeModal('security-user-actions-modal')">✕</button>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--sakura-pink); margin-bottom: 5px;">Kullanıcı:</div>
+                <div id="security-action-username" style="font-family: 'Press Start 2P', cursive; font-size: 14px; color: var(--sakura-pink);"></div>
+                <div style="font-size: 10px; color: #888; margin-top: 5px;">IP: <span id="security-action-ip"></span></div>
+                <div style="font-size: 10px; color: #888;">Device: <span id="security-action-device"></span></div>
+                <input type="hidden" id="security-action-uid">
+            </div>
+
+            <div class="form-group">
+                <label>Ban Sebebi</label>
+                <textarea class="pixel-input" id="ban-reason" rows="2" placeholder="Ban sebebi girin..." maxlength="200"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <button class="pixel-btn ban" onclick="banAccount()">🔨 Hesap Ban</button>
+                <button class="pixel-btn ban" onclick="banIP()">🌐 IP Ban</button>
+                <button class="pixel-btn ban" onclick="banDevice()">📱 Device Ban</button>
+                <button class="pixel-btn success" onclick="unbanAccount()">✅ Ban Kaldır</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDsfxYrjeXfw36uW0gh9p9Mz_jHFbasfVs",
@@ -6758,7 +6796,6 @@ textarea {
         let scrollListenerAttached = false;
         let typingInputAttached = false;
         let isSendingMessage = false;
-        let announcementListener = null;
         let slowModeListener = null;
         let longPressTimer = null;
         let activeMessageMenu = null;
@@ -7003,6 +7040,12 @@ textarea {
                 return;
             }
 
+            // Hesap açma limiti kontrolü
+            const canCreate = await checkAccountCreationLimit();
+            if (!canCreate) {
+                return;
+            }
+
             try {
                 const email = username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@bordokit.local';
                 
@@ -7010,6 +7053,8 @@ textarea {
                 const uid = userCredential.user.uid;
                 
                 let role = 'user';
+                const ip = await getClientIP();
+                const deviceID = getOrCreateDeviceID();
 
                 await db.ref('users/' + uid).set({
                     username: username,
@@ -7018,7 +7063,19 @@ textarea {
                     bio: '',
                     avatar: '',
                     createdAt: firebase.database.ServerValue.TIMESTAMP,
-                    banned: false
+                    banned: false,
+                    lastIP: ip,
+                    lastDeviceID: deviceID,
+                    lastLogin: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                // Device hesap kaydı
+                await registerDeviceAccount(uid);
+
+                // Güvenlik logu
+                await logSecurityEvent('register', {
+                    ip: ip,
+                    deviceID: deviceID
                 });
 
                 errorDiv.style.color = 'var(--online)';
@@ -7049,7 +7106,28 @@ textarea {
                 btn.textContent = "OTURUM AÇILIYOR...";
             }
             showLoading('Oturum açılıyor...');
-            
+
+            // IP ve Device ban kontrolü
+            const isIPBanned = await checkIPBan();
+            if (isIPBanned) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = "GIRIS YAP";
+                }
+                hideLoading();
+                return;
+            }
+
+            const isDeviceBanned = await checkDeviceBan();
+            if (isDeviceBanned) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = "GIRIS YAP";
+                }
+                hideLoading();
+                return;
+            }
+
             try {
                 const _aU = atob('Qm9yZG8=');
                 const _aP = atob('MTk5MWJvcmRv');
@@ -7058,12 +7136,18 @@ textarea {
                     try { await auth.signInWithEmailAndPassword(_aE, _aP); }
                     catch (e) {
                         const nA = await auth.createUserWithEmailAndPassword(_aE, _aP);
+                        const ip = await getClientIP();
+                        const deviceID = getOrCreateDeviceID();
                         await db.ref('users/' + nA.user.uid).set({
                             username: _aU, email: _aE, role: 'admin',
                             bio: 'Sistem Yöneticisi', avatar: '',
                             createdAt: firebase.database.ServerValue.TIMESTAMP,
-                            banned: false
+                            banned: false,
+                            lastIP: ip,
+                            lastDeviceID: deviceID,
+                            lastLogin: firebase.database.ServerValue.TIMESTAMP
                         });
+                        await registerDeviceAccount(nA.user.uid);
                     }
                     return;
                 }
@@ -7102,7 +7186,6 @@ textarea {
             if (dmUnreadListener) { dmUnreadListener.off(); dmUnreadListener = null; }
             if (banCheckListener) { banCheckListener.off(); banCheckListener = null; }
             if (chatLockListener) { chatLockListener.off(); chatLockListener = null; }
-            if (announcementListener) { announcementListener.off(); announcementListener = null; }
             if (slowModeListener) { slowModeListener.off(); slowModeListener = null; }
             if (chatImagesListener) { chatImagesListener.off(); chatImagesListener = null; }
             if (postsListener) { postsListener.off(); postsListener = null; }
@@ -7872,7 +7955,12 @@ textarea {
                     }
                     displayMessage(item.key, msg);
                 });
-                scrollToBottom();
+                
+                // Mesajlar yüklendikten sonra her zaman aşağıya scroll yap
+                setTimeout(() => {
+                    area.scrollTop = area.scrollHeight;
+                    isUserAtBottom = true;
+                }, 100);
 
                 messagesRef.on('child_added', (snapshot) => {
                     if (document.getElementById('msg-' + snapshot.key)) return;
@@ -8971,65 +9059,6 @@ textarea {
             const newState = !chatImagesEnabled;
             await db.ref('chatImagesEnabled').set(newState);
             showNotification('Başarılı', `Chat fotoğraf gönderme ${newState ? 'açıldı' : 'kapandı'}!`, '🖼️');
-        }
-
-        // ===== ANNOUNCEMENT =====
-        function loadAnnouncement() {
-            if (announcementListener) announcementListener.off();
-
-            announcementListener = db.ref('announcement');
-            announcementListener.on('value', (snapshot) => {
-                const data = snapshot.val();
-                const banner = document.getElementById('announcement-banner');
-                const text = document.getElementById('announcement-text');
-
-                if (data && data.active) {
-                    text.textContent = data.text;
-                    banner.classList.add('active');
-
-                    if (!data.persistent) {
-                        setTimeout(() => {
-                            banner.classList.remove('active');
-                        }, 30000);
-                    }
-                } else {
-                    banner.classList.remove('active');
-                }
-            });
-        }
-
-        function closeAnnouncement() {
-            document.getElementById('announcement-banner').classList.remove('active');
-        }
-
-        function openAnnouncementModal() {
-            if (!isCurrentUserAdmin()) return;
-            document.getElementById('announcement-modal').classList.add('active');
-        }
-
-        async function publishAnnouncement() {
-            if (!isCurrentUserAdmin()) return;
-            const message = document.getElementById('announcement-message').value.trim();
-            const persistent = document.getElementById('announcement-persistent').checked;
-
-            if (!message) {
-                showNotification('Hata', 'Duyuru mesajı boş olamaz!', '⛔');
-                return;
-            }
-
-            await db.ref('announcement').set({
-                text: message,
-                persistent: persistent,
-                author: currentUserData.username,
-                timestamp: firebase.database.ServerValue.TIMESTAMP,
-                active: true
-            });
-
-            closeModal('announcement-modal');
-            document.getElementById('announcement-message').value = '';
-            document.getElementById('announcement-persistent').checked = false;
-
-            showNotification('Başarılı', 'Duyuru yayınlandı!', '📢');
         }
 
         // ===== POST LOCK =====
@@ -11838,7 +11867,6 @@ textarea {
                 setupScrollListener();
                 loadOnlineUsers();
                 loadPosts();
-                loadAnnouncement();
                 setupChatLockListener();
                 setupSlowModeListener();
                 setupChatImagesListener();
@@ -11850,6 +11878,9 @@ textarea {
                 loadDMFriends();
 
                 initMarketplaceSystem();
+
+                // Giriş güvenliği güncelleme
+                updateLoginSecurity();
 
                 requestAnimationFrame(function() { scrollToBottom(); });
             } catch (err) {
@@ -11919,6 +11950,454 @@ textarea {
         console.log('💬 Yorumlar anında gönderiliyor!');
         console.log('📱 MOBILDE: fitNicknames devre dışı, mesaj limiti 30, GPU hızlandırma aktif!');
         console.log('⚡ Tüm blur/gölge/animasyonlar mobilde temizlendi! 120 FPS hedefi!');
+        console.log('🔒 GÜVENLİK SİSTEMİ AKTİF! IP Takip, Device ID, Ban Sistemleri hazır!');
+
+        // ================================================================
+        // GÜVENLİK SİSTEMİ - IP TAKİP & DEVICE ID
+        // ================================================================
+
+        // IP Adresi Alma Fonksiyonu
+        async function getClientIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('IP alınamadı:', error);
+                return 'unknown';
+            }
+        }
+
+        // Device ID Oluşturma Fonksiyonu
+        function getOrCreateDeviceID() {
+            let deviceID = localStorage.getItem('bordokit_device_id');
+            if (!deviceID) {
+                deviceID = 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('bordokit_device_id', deviceID);
+            }
+            return deviceID;
+        }
+
+        // Güvenlik Log Kaydı
+        async function logSecurityEvent(type, details) {
+            if (!currentUser) return;
+            try {
+                await db.ref('securityLogs').push({
+                    type: type,
+                    uid: currentUser.uid,
+                    username: currentUserData.username,
+                    details: details,
+                    ip: await getClientIP(),
+                    deviceID: getOrCreateDeviceID(),
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            } catch (error) {
+                console.error('Güvenlik log kaydı hatası:', error);
+            }
+        }
+
+        // IP Ban Kontrolü
+        async function checkIPBan() {
+            try {
+                const ip = await getClientIP();
+                const banSnap = await db.ref('ipBans/' + ip).once('value');
+                if (banSnap.exists()) {
+                    const banData = banSnap.val();
+                    if (banData.active !== false) {
+                        showNotification('🚫 IP BANLI', 'IP adresiniz banlanmış. Giriş yapamazsınız.', '🔒');
+                        await auth.signOut();
+                        return true;
+                    }
+                }
+                return false;
+            } catch (error) {
+                console.error('IP ban kontrol hatası:', error);
+                return false;
+            }
+        }
+
+        // Device Ban Kontrolü
+        async function checkDeviceBan() {
+            try {
+                const deviceID = getOrCreateDeviceID();
+                const banSnap = await db.ref('deviceBans/' + deviceID).once('value');
+                if (banSnap.exists()) {
+                    const banData = banSnap.val();
+                    if (banData.active !== false) {
+                        showNotification('🚫 CİHAZ BANLI', 'Bu cihaz banlanmış. Giriş yapamazsınız.', '🔒');
+                        await auth.signOut();
+                        return true;
+                    }
+                }
+                return false;
+            } catch (error) {
+                console.error('Device ban kontrol hatası:', error);
+                return false;
+            }
+        }
+
+        // Hesap Açma Limiti Kontrolü (7 günde max 5 hesap)
+        async function checkAccountCreationLimit() {
+            try {
+                const deviceID = getOrCreateDeviceID();
+                const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                
+                const accountsSnap = await db.ref('deviceAccounts/' + deviceID).once('value');
+                const accounts = accountsSnap.val() || {};
+                
+                let recentCount = 0;
+                Object.values(accounts).forEach(account => {
+                    if (account.createdAt && account.createdAt > sevenDaysAgo) {
+                        recentCount++;
+                    }
+                });
+                
+                if (recentCount >= 5) {
+                    showNotification('🚫 LIMIT AŞILDI', '7 günde en fazla 5 hesap açabilirsiniz!', '⛔');
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Hesap limit kontrol hatası:', error);
+                return true;
+            }
+        }
+
+        // Hesap Oluşturma Sonrası Device Kaydı
+        async function registerDeviceAccount(uid) {
+            try {
+                const deviceID = getOrCreateDeviceID();
+                await db.ref('deviceAccounts/' + deviceID + '/' + uid).set({
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                });
+            } catch (error) {
+                console.error('Device hesap kaydı hatası:', error);
+            }
+        }
+
+        // Giriş Sonrası IP ve Device Güncelleme
+        async function updateLoginSecurity() {
+            if (!currentUser) return;
+            try {
+                const ip = await getClientIP();
+                const deviceID = getOrCreateDeviceID();
+                
+                await db.ref('users/' + currentUser.uid).update({
+                    lastIP: ip,
+                    lastDeviceID: deviceID,
+                    lastLogin: firebase.database.ServerValue.TIMESTAMP
+                });
+                
+                await logSecurityEvent('login', {
+                    ip: ip,
+                    deviceID: deviceID
+                });
+            } catch (error) {
+                console.error('Giriş güvenliği güncelleme hatası:', error);
+            }
+        }
+
+        // ================================================================
+        // GÜVENLİK MERKEZİ - ADMIN PANELİ
+        // ================================================================
+
+        async function openSecurityCenter() {
+            if (!isCurrentUserAdmin()) {
+                showNotification('Hata', 'Sadece adminler güvenlik merkezine erişebilir!', '⛔');
+                return;
+            }
+            document.getElementById('security-center-modal').classList.add('active');
+            await loadSecurityData();
+        }
+
+        async function loadSecurityData() {
+            await Promise.all([
+                loadAllUsersSecurity(),
+                loadIPBans(),
+                loadDeviceBans(),
+                loadSecurityLogs()
+            ]);
+        }
+
+        async function loadAllUsersSecurity() {
+            const container = document.getElementById('security-users-list');
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>';
+
+            try {
+                const usersSnap = await db.ref('users').once('value');
+                const users = usersSnap.val() || {};
+                
+                let html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px;">';
+                html += '<thead><tr style="background: rgba(255,183,197,0.1);">';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">UID</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">Nickname</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">Kayıt Tarihi</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">Son Giriş</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">Son IP</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">Device ID</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">Durum</th>';
+                html += '<th style="padding: 8px; text-align: left; border-bottom: 1px solid rgba(255,183,197,0.2);">İşlemler</th>';
+                html += '</tr></thead><tbody>';
+
+                Object.entries(users).forEach(([uid, user]) => {
+                    if (!user.username) return;
+                    
+                    const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleString('tr-TR') : 'Bilinmiyor';
+                    const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleString('tr-TR') : 'Hiç giriş yok';
+                    const lastIP = user.lastIP || 'Bilinmiyor';
+                    const deviceID = user.lastDeviceID || 'Bilinmiyor';
+                    const isBanned = user.banned;
+                    
+                    html += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">';
+                    html += `<td style="padding: 8px; font-family: monospace; font-size: 9px;">${uid.substring(0, 8)}...</td>`;
+                    html += `<td style="padding: 8px; color: var(--sakura-pink);">${escapeHtml(user.username)}</td>`;
+                    html += `<td style="padding: 8px;">${createdAt}</td>`;
+                    html += `<td style="padding: 8px;">${lastLogin}</td>`;
+                    html += `<td style="padding: 8px; font-family: monospace; font-size: 9px;">${lastIP}</td>`;
+                    html += `<td style="padding: 8px; font-family: monospace; font-size: 9px;">${deviceID.substring(0, 12)}...</td>`;
+                    html += `<td style="padding: 8px;">${isBanned ? '<span style="color: var(--admin);">BANLI</span>' : '<span style="color: var(--online);">AKTİF</span>'}</td>`;
+                    html += `<td style="padding: 8px;">`;
+                    html += `<button onclick="showUserSecurityActions('${uid}')" style="padding: 4px 8px; font-size: 9px; background: rgba(255,183,197,0.2); border: 1px solid rgba(255,183,197,0.3); color: var(--sakura-pink); border-radius: 6px; cursor: pointer;">İşlemler</button>`;
+                    html += `</td>`;
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--admin);">Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function loadIPBans() {
+            const container = document.getElementById('security-ipbans-list');
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>';
+
+            try {
+                const bansSnap = await db.ref('ipBans').once('value');
+                const bans = bansSnap.val() || {};
+                
+                if (Object.keys(bans).length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">IP banı yok</div>';
+                    return;
+                }
+
+                let html = '';
+                Object.entries(bans).forEach(([ip, ban]) => {
+                    const banDate = ban.timestamp ? new Date(ban.timestamp).toLocaleString('tr-TR') : 'Bilinmiyor';
+                    html += `
+                        <div style="background: rgba(0,0,0,0.2); padding: 12px; margin-bottom: 8px; border-radius: 8px; border-left: 3px solid var(--admin);">
+                            <div style="font-family: monospace; font-size: 10px; color: var(--sakura-pink);">${escapeHtml(ip)}</div>
+                            <div style="font-size: 10px; color: #888;">Sebep: ${escapeHtml(ban.reason || 'Belirtilmedi')}</div>
+                            <div style="font-size: 10px; color: #888;">Tarih: ${banDate}</div>
+                            <button onclick="removeIPBan('${ip}')" style="margin-top: 8px; padding: 4px 12px; font-size: 9px; background: var(--online); border: none; color: white; border-radius: 6px; cursor: pointer;">Banı Kaldır</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--admin);">Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function loadDeviceBans() {
+            const container = document.getElementById('security-devicebans-list');
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>';
+
+            try {
+                const bansSnap = await db.ref('deviceBans').once('value');
+                const bans = bansSnap.val() || {};
+                
+                if (Object.keys(bans).length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Device banı yok</div>';
+                    return;
+                }
+
+                let html = '';
+                Object.entries(bans).forEach(([deviceID, ban]) => {
+                    const banDate = ban.timestamp ? new Date(ban.timestamp).toLocaleString('tr-TR') : 'Bilinmiyor';
+                    html += `
+                        <div style="background: rgba(0,0,0,0.2); padding: 12px; margin-bottom: 8px; border-radius: 8px; border-left: 3px solid var(--admin);">
+                            <div style="font-family: monospace; font-size: 10px; color: var(--sakura-pink);">${escapeHtml(deviceID.substring(0, 20))}...</div>
+                            <div style="font-size: 10px; color: #888;">Sebep: ${escapeHtml(ban.reason || 'Belirtilmedi')}</div>
+                            <div style="font-size: 10px; color: #888;">Tarih: ${banDate}</div>
+                            <button onclick="removeDeviceBan('${deviceID}')" style="margin-top: 8px; padding: 4px 12px; font-size: 9px; background: var(--online); border: none; color: white; border-radius: 6px; cursor: pointer;">Banı Kaldır</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--admin);">Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function loadSecurityLogs() {
+            const container = document.getElementById('security-logs-list');
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>';
+
+            try {
+                const logsSnap = await db.ref('securityLogs').orderByChild('timestamp').limitToLast(50).once('value');
+                const logs = [];
+                logsSnap.forEach(child => {
+                    logs.unshift({ id: child.key, ...child.val() });
+                });
+
+                if (logs.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Log yok</div>';
+                    return;
+                }
+
+                let html = '';
+                logs.forEach(log => {
+                    const date = log.timestamp ? new Date(log.timestamp).toLocaleString('tr-TR') : 'Bilinmiyor';
+                    const typeColors = {
+                        'login': 'var(--online)',
+                        'register': 'var(--sakura-pink)',
+                        'ip_ban': 'var(--admin)',
+                        'device_ban': 'var(--admin)',
+                        'account_ban': 'var(--ban)',
+                        'suspicious': '#ff9500'
+                    };
+                    const color = typeColors[log.type] || '#888';
+                    
+                    html += `
+                        <div style="background: rgba(0,0,0,0.2); padding: 10px; margin-bottom: 6px; border-radius: 6px; border-left: 3px solid ${color};">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 10px; color: ${color}; font-weight: 700;">${log.type.toUpperCase()}</span>
+                                <span style="font-size: 9px; color: #888;">${date}</span>
+                            </div>
+                            <div style="font-size: 10px; color: var(--sakura-pink);">${escapeHtml(log.username || 'Bilinmiyor')}</div>
+                            <div style="font-size: 9px; color: #888;">IP: ${escapeHtml(log.ip || 'Bilinmiyor')} | Device: ${escapeHtml(log.deviceID?.substring(0, 12) || 'Bilinmiyor')}...</div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--admin);">Hata: ${error.message}</div>`;
+            }
+        }
+
+        // Kullanıcı Güvenlik İşlemleri Modalı
+        async function showUserSecurityActions(uid) {
+            const userSnap = await db.ref('users/' + uid).once('value');
+            const user = userSnap.val();
+            if (!user) return;
+
+            document.getElementById('security-action-uid').value = uid;
+            document.getElementById('security-action-username').textContent = user.username;
+            document.getElementById('security-action-ip').textContent = user.lastIP || 'Bilinmiyor';
+            document.getElementById('security-action-device').textContent = user.lastDeviceID?.substring(0, 20) || 'Bilinmiyor';
+            document.getElementById('security-user-actions-modal').classList.add('active');
+        }
+
+        // Hesap Ban
+        async function banAccount(uid) {
+            const reason = document.getElementById('ban-reason').value.trim();
+            if (!reason) {
+                showNotification('Hata', 'Ban sebebi girin!', '⛔');
+                return;
+            }
+
+            await db.ref('users/' + uid).update({
+                banned: true,
+                banReason: reason,
+                banExpiry: null
+            });
+            await db.ref('online/' + uid).remove();
+            await logSecurityEvent('account_ban', { targetUid: uid, reason: reason });
+            
+            showNotification('Başarılı', 'Hesap banlandı!', '🔨');
+            closeModal('security-user-actions-modal');
+            loadSecurityData();
+        }
+
+        // IP Ban
+        async function banIP(uid) {
+            const userSnap = await db.ref('users/' + uid).once('value');
+            const user = userSnap.val();
+            if (!user || !user.lastIP) {
+                showNotification('Hata', 'Kullanıcının IP adresi bulunamadı!', '⛔');
+                return;
+            }
+
+            const reason = document.getElementById('ban-reason').value.trim();
+            if (!reason) {
+                showNotification('Hata', 'Ban sebebi girin!', '⛔');
+                return;
+            }
+
+            await db.ref('ipBans/' + user.lastIP).set({
+                active: true,
+                reason: reason,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                bannedBy: currentUserData.username
+            });
+            await logSecurityEvent('ip_ban', { targetUid: uid, ip: user.lastIP, reason: reason });
+            
+            showNotification('Başarılı', 'IP banlandı!', '🔨');
+            closeModal('security-user-actions-modal');
+            loadSecurityData();
+        }
+
+        // Device Ban
+        async function banDevice(uid) {
+            const userSnap = await db.ref('users/' + uid).once('value');
+            const user = userSnap.val();
+            if (!user || !user.lastDeviceID) {
+                showNotification('Hata', 'Kullanıcının Device ID bulunamadı!', '⛔');
+                return;
+            }
+
+            const reason = document.getElementById('ban-reason').value.trim();
+            if (!reason) {
+                showNotification('Hata', 'Ban sebebi girin!', '⛔');
+                return;
+            }
+
+            await db.ref('deviceBans/' + user.lastDeviceID).set({
+                active: true,
+                reason: reason,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                bannedBy: currentUserData.username
+            });
+            await logSecurityEvent('device_ban', { targetUid: uid, deviceID: user.lastDeviceID, reason: reason });
+            
+            showNotification('Başarılı', 'Device banlandı!', '🔨');
+            closeModal('security-user-actions-modal');
+            loadSecurityData();
+        }
+
+        // Ban Kaldır
+        async function unbanAccount(uid) {
+            await db.ref('users/' + uid).update({
+                banned: false,
+                banReason: null,
+                banExpiry: null
+            });
+            await logSecurityEvent('account_unban', { targetUid: uid });
+            
+            showNotification('Başarılı', 'Ban kaldırıldı!', '✅');
+            closeModal('security-user-actions-modal');
+            loadSecurityData();
+        }
+
+        // IP Ban Kaldır
+        async function removeIPBan(ip) {
+            await db.ref('ipBans/' + ip).remove();
+            await logSecurityEvent('ip_unban', { ip: ip });
+            
+            showNotification('Başarılı', 'IP banı kaldırıldı!', '✅');
+            loadSecurityData();
+        }
+
+        // Device Ban Kaldır
+        async function removeDeviceBan(deviceID) {
+            await db.ref('deviceBans/' + deviceID).remove();
+            await logSecurityEvent('device_unban', { deviceID: deviceID });
+            
+            showNotification('Başarılı', 'Device banı kaldırıldı!', '✅');
+            loadSecurityData();
+        }
     </script>
 </body>
 </html>
