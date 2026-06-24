@@ -10774,6 +10774,27 @@ textarea {
             
             const newRole = document.getElementById('role-select').value;
             await db.ref('users/' + viewingUserId).update({ role: newRole });
+            
+            // Local data ve UI'ı güncelle
+            if (viewingUserData) {
+                viewingUserData.role = newRole;
+            }
+            
+            // Modaldaki rol badge'ini güncelle
+            document.getElementById('view-role').textContent = newRole === 'black-lung' ? 'BLACK LUNG' : newRole === 'cerrah' ? '🫀 CERRAH' : newRole.toUpperCase();
+            document.getElementById('view-role').style.background = newRole === 'black-lung' ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)' : newRole === 'cerrah' ? 'var(--surgeon)' : '';
+            document.getElementById('view-role').style.boxShadow = newRole === 'black-lung' ? '0 0 15px var(--black-lung-glow), 0 0 30px var(--black-lung-sparkle)' : newRole === 'cerrah' ? '0 0 8px var(--surgeon-glow)' : '';
+            
+            // Verified badge'ini güncelle
+            const verifiedBadge = document.getElementById('view-verified-badge');
+            if (verifiedBadge) {
+                if (newRole === 'verified') {
+                    verifiedBadge.classList.remove('hidden');
+                } else {
+                    verifiedBadge.classList.add('hidden');
+                }
+            }
+            
             showNotification('Rol Güncellendi', `Kullanıcı rolü ${newRole} olarak güncellendi!`, '✅');
         }
 
