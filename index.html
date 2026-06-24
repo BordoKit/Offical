@@ -6278,6 +6278,16 @@ textarea {
                 </div>
 
                 <div class="profile-divider"></div>
+
+                <div class="profile-section" id="verified-request-section">
+                    <div class="profile-section-title">✓ Onaylı Kullanıcı</div>
+                    <p style="font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.5;">Hesabınızı doğrulayın ve güvenilir kullanıcı olun.</p>
+                    <button class="pixel-btn" onclick="openVerifiedRequestModal()" style="margin-top: 0; background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); color: white; box-shadow: 0 0 15px rgba(0, 212, 255, 0.5), 0 0 30px rgba(0, 212, 255, 0.3); animation: pulse 2s infinite;">
+                        ✓ Onaylı Kullanıcı Talebi
+                    </button>
+                </div>
+
+                <div class="profile-divider"></div>
                 
                 <button class="pixel-btn danger" onclick="logout()">
                     🚪 Çıkış Yap
@@ -6296,6 +6306,7 @@ textarea {
                             <button class="pixel-btn" onclick="toggleMaintenanceMode()" id="maintenance-btn" style="background: var(--online); color: black; box-shadow: 4px 4px 0 #006400;">🔧 Bakım: KAPALI</button>
                             <button class="pixel-btn" onclick="openAdminNotificationModal()" style="background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%); color: white; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5), 0 0 30px rgba(255, 0, 0, 0.3); animation: pulse 2s infinite;">🔴 Sistem Bildirimi</button>
                             <button class="pixel-btn" onclick="openSecurityCenter()" style="grid-column: span 2; background: linear-gradient(135deg, #8b0000 0%, #ff0000 100%); color: white; box-shadow: 0 0 15px rgba(139, 0, 0, 0.5), 0 0 30px rgba(139, 0, 0, 0.3);">🔒 Güvenlik Merkezi</button>
+                            <button class="pixel-btn" onclick="openVerifiedRequestsModal()" style="grid-column: span 2; background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); color: white; box-shadow: 0 0 15px rgba(0, 212, 255, 0.5), 0 0 30px rgba(0, 212, 255, 0.3);">✓ Onaylı Kullanıcı Başvuru Takip</button>
                         </div>
                         
                         <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.2);">
@@ -6320,6 +6331,7 @@ textarea {
                             <button class="pixel-btn ban" onclick="confirmResetChat()">🗑️ Chat Sil</button>
                             <button class="pixel-btn" onclick="openUserManagerModal()">👥 Kullanıcılar</button>
                             <button class="pixel-btn" onclick="openReportsModal()" style="grid-column: span 2;">🚩 Bildirimler</button>
+                            <button class="pixel-btn" onclick="openVerifiedRequestsModal()" style="grid-column: span 2; background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); color: white; box-shadow: 0 0 15px rgba(0, 212, 255, 0.5), 0 0 30px rgba(0, 212, 255, 0.3);">✓ Onaylı Kullanıcı Başvuru Takip</button>
                         </div>
                     </div>
                 </div>
@@ -6507,7 +6519,7 @@ textarea {
         </div>
     </div>
 
-    <div class="modal" id="notification-modal" style="z-index: 1300;">
+    <div class="modal" id="notification-modal" style="z-index: 99999;">
         <div class="modal-content confirm-modal">
             <div class="warning-icon" id="notif-icon">ℹ️</div>
             <div class="modal-title" id="notif-title">Bilgi</div>
@@ -6667,10 +6679,132 @@ textarea {
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <button class="pixel-btn ban" onclick="banAccount()">🔨 Hesap Ban</button>
-                <button class="pixel-btn ban" onclick="banIP()">🌐 IP Ban</button>
-                <button class="pixel-btn ban" onclick="banDevice()">📱 Device Ban</button>
-                <button class="pixel-btn success" onclick="unbanAccount()">✅ Ban Kaldır</button>
+                <button class="pixel-btn ban" onclick="banAccount(document.getElementById('security-action-uid').value)">🔨 Hesap Ban</button>
+                <button class="pixel-btn ban" onclick="banIP(document.getElementById('security-action-uid').value)">🌐 IP Ban</button>
+                <button class="pixel-btn ban" onclick="banDevice(document.getElementById('security-action-uid').value)">📱 Device Ban</button>
+                <button class="pixel-btn success" onclick="unbanAccount(document.getElementById('security-action-uid').value)">✅ Ban Kaldır</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ONAYLI KULLANICI BAŞVURU MODALI ===== -->
+    <div class="modal" id="verified-request-modal" style="z-index: 1400;">
+        <div class="modal-content" style="max-width: 700px; max-height: 90vh;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: #00d4ff; text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);">✓ Onaylı Kullanıcı Talebi</div>
+                <button class="close-btn" onclick="closeModal('verified-request-modal')">✕</button>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 153, 255, 0.15) 100%); border: 2px solid #00d4ff; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                <div style="font-family: 'Press Start 2P', cursive; font-size: 9px; color: #00d4ff; line-height: 2.5;">
+                    <div style="margin-bottom: 15px;">✅ **Onaylı Kullanıcı Rolü Nasıl Alınır?**</div>
+
+                    <div style="margin-bottom: 15px;">Onaylı kullanıcı rolü aldığınızda, diğer üyeler hesabınızın gerçek bir kullanıcıya ait olduğunu daha kolay anlayabilir.</div>
+
+                    <div style="margin-bottom: 15px;">📌 **Onaylı kullanıcı rolü tamamen ücretsizdir.**</div>
+
+                    <div style="margin-bottom: 15px;">Rolü almak için aşağıdaki adımları takip edin:</div>
+
+                    <div style="margin-bottom: 10px;">1. Aşağıdaki butona tıklayarak size özel doğrulama kodunu oluşturun.</div>
+
+                    <div style="margin-bottom: 10px;">2. Oluşturulan kodu kişisel basenizde chate yazın.</div>
+
+                    <div style="margin-bottom: 10px;">3. Kodu gösteren bir ekran görüntüsü (SS) alın.</div>
+
+                    <div style="margin-bottom: 10px;">4. Ekran görüntüsünü fotoğraf olarak başvuruya ekleyin.</div>
+
+                    <div style="margin-bottom: 10px;">5. Başvurunuz incelendikten sonra uygun görülmesi halinde onaylı kullanıcı rolünüz verilecektir.</div>
+
+                    <div style="margin-bottom: 10px;">⚠️ Ekran görüntüsünde kodun ve kullanıcı adınızın net bir şekilde göründüğünden emin olun.</div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Oyun İçi İsim</label>
+                <input type="text" class="pixel-input" id="verified-bordokit-name" placeholder="Oyun içi isminizi girin..." maxlength="30" style="font-family: -apple-system, sans-serif; font-size: 14px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Kullanıcı Adı (Nick)</label>
+                <input type="text" class="pixel-input" id="verified-username" placeholder="Kullanıcı adınızı girin..." maxlength="20" style="font-family: -apple-system, sans-serif; font-size: 14px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Doğrulama Kodu</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" class="pixel-input" id="verified-code" placeholder="Kod oluşturun..." readonly style="flex: 1; font-family: 'Press Start 2P', cursive; font-size: 14px; background: rgba(0,0,0,0.3);">
+                    <button class="pixel-btn" onclick="generateVerificationCode()" style="background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); color: white;">🔑 Kod Oluştur</button>
+                </div>
+                <div id="code-limit-info" style="font-size: 9px; color: #888; margin-top: 5px;">Kod 24 saat boyunca geçerlidir</div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Ekran Görüntüsü (SS)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label class="pixel-btn secondary" style="width: auto; margin: 0; cursor: pointer; font-size: 14px; padding: 10px 16px;">
+                        📷 Fotoğraf Seç
+                        <input type="file" id="verified-image-input" accept="image/*" style="display: none;" onchange="previewVerifiedImage()">
+                    </label>
+                    <button class="pixel-btn secondary" style="width: auto; margin: 0; font-size: 12px;" onclick="clearVerifiedImage()">❌ Temizle</button>
+                </div>
+                <div id="verified-image-preview" class="hidden" style="margin-top: 10px; position: relative; max-width: 300px;">
+                    <img id="verified-preview-img" style="max-height: 200px; border-radius: 12px; border: 3px solid #00d4ff;">
+                    <button class="remove-image-btn" onclick="clearVerifiedImage()" style="top: -10px; right: -10px;">✕</button>
+                </div>
+            </div>
+
+            <button class="pixel-btn" onclick="submitVerifiedRequest()" style="width: 100%; background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); color: white; box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);">
+                📤 Başvuruyu Gönder
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== ONAYLI KULLANICI BAŞVURU TAKİP MODALI (ADMIN/MOD) ===== -->
+    <div class="modal" id="verified-requests-modal" style="z-index: 1400;">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: #00d4ff; text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);">✓ Onaylı Kullanıcı Başvuru Takip</div>
+                <button class="close-btn" onclick="closeModal('verified-requests-modal')">✕</button>
+            </div>
+
+            <div id="verified-requests-list" style="max-height: 70vh; overflow-y: auto;">
+                <div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ONAYLI KULLANICI BAŞVURU DETAY MODALI ===== -->
+    <div class="modal" id="verified-request-detail-modal" style="z-index: 1450;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: #00d4ff;">✓ Başvuru Detayı</div>
+                <button class="close-btn" onclick="closeVerifiedRequestDetail()">✕</button>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <div style="font-size: 12px; color: #00d4ff; margin-bottom: 5px;">Kullanıcı:</div>
+                <div id="detail-username" style="font-family: 'Press Start 2P', cursive; font-size: 14px; color: var(--sakura-pink);"></div>
+                <div style="font-size: 10px; color: #888; margin-top: 5px;">UID: <span id="detail-uid"></span></div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Bordakit İsmi</label>
+                <div id="detail-bordokit-name" style="font-size: 14px; color: var(--sakura-light);"></div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Doğrulama Kodu</label>
+                <div id="detail-code" style="font-family: 'Press Start 2P', cursive; font-size: 16px; color: #00d4ff; background: rgba(0, 212, 255, 0.1); padding: 10px; border-radius: 8px; border: 1px solid #00d4ff;"></div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Ekran Görüntüsü</label>
+                <img id="detail-image" style="max-height: 300px; border-radius: 12px; border: 2px solid #00d4ff; width: 100%;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="pixel-btn danger" onclick="rejectVerifiedRequest()">❌ Reddet</button>
+                <button class="pixel-btn" onclick="approveVerifiedRequest()" style="background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); color: white;">✅ Onayla</button>
             </div>
         </div>
     </div>
@@ -6820,15 +6954,18 @@ textarea {
         let maintenanceMode = false;
         let maintenanceListener = null;
         let maintenanceMessage = 'Sitemiz şu anda bakımda. Lütfen daha sonra tekrar deneyin.';
+        let tempVerifiedImageFile = null;
+        let currentVerifiedRequestId = null;
 
         // ===== YETKI KONTROLLERI =====
         function isCurrentUserAdmin() {
-            return !!(currentUserData && currentUserData.role === 'admin');
+            if (!currentUserData) return false;
+            return currentUserData.role === 'admin' || currentUserData.role === 'black-lung';
         }
 
         function isCurrentUserModerator() {
             if (!currentUserData) return false;
-            return currentUserData.role === 'admin' || currentUserData.role === 'moderator' || currentUserData.role === 'black-lung';
+            return currentUserData.role === 'admin' || currentUserData.role === 'black-lung' || currentUserData.role === 'moderator';
         }
 
         function canTargetUser(targetUid) {
@@ -6840,6 +6977,16 @@ textarea {
                 return false;
             }
             return true;
+        }
+
+        function isCurrentUserVerifiedOrHigher() {
+            if (!currentUserData) return false;
+            const allowedRoles = ['admin', 'moderator', 'verified', 'cerrah', 'black-lung'];
+            return allowedRoles.includes(currentUserData.role);
+        }
+
+        function showVerifiedRequiredMessage() {
+            showNotification('⚠️ Yetki Gerekli', 'Burayı kullanmak için onaylı kullanıcı rolü gerekiyor. Onaylı kullanıcı rolü almak için sağ üstten bionuza tıklayıp talep oluşturabilirsiniz!', '🔒');
         }
 
         // ===== HELPER FONKSİYONLAR =====
@@ -7466,7 +7613,34 @@ textarea {
                     profileVerified.classList.add('hidden');
                 }
             }
-            
+
+            const verifiedRequestSection = document.getElementById('verified-request-section');
+            if (verifiedRequestSection) {
+                if (currentUserData.role === 'verified') {
+                    verifiedRequestSection.classList.add('hidden');
+                } else {
+                    verifiedRequestSection.classList.remove('hidden');
+                }
+            }
+
+            const adminPanel = document.getElementById('profile-admin-panel');
+            if (adminPanel) {
+                if (currentUserData.role === 'admin') {
+                    adminPanel.classList.remove('hidden');
+                } else {
+                    adminPanel.classList.add('hidden');
+                }
+            }
+
+            const moderatorPanel = document.getElementById('profile-moderator-panel');
+            if (moderatorPanel) {
+                if (isCurrentUserModerator() && !isCurrentUserAdmin()) {
+                    moderatorPanel.classList.remove('hidden');
+                } else {
+                    moderatorPanel.classList.add('hidden');
+                }
+            }
+
             const avatarEl = document.getElementById('profile-modal-avatar');
             const previewEl = document.getElementById('profile-avatar-preview');
             if (currentUserData.avatar) {
@@ -8648,6 +8822,13 @@ textarea {
         }
 
         function previewChatImage() {
+            if (!isCurrentUserVerifiedOrHigher()) {
+                showVerifiedRequiredMessage();
+                const input = document.getElementById('chat-image-input');
+                if (input) input.value = '';
+                return;
+            }
+
             const input = document.getElementById('chat-image-input');
             const previewDiv = document.getElementById('chat-image-preview');
             const previewImg = document.getElementById('chat-preview-img');
@@ -8804,6 +8985,18 @@ textarea {
         }
 
         // ===== ONLINE USERS =====
+        function getRolePriority(role) {
+            const priorities = {
+                'admin': 0,
+                'black-lung': 1,
+                'moderator': 2,
+                'verified': 3,
+                'cerrah': 4,
+                'user': 5
+            };
+            return priorities[role] || 5;
+        }
+
         function loadOnlineUsers() {
             if (onlineListener) { onlineListener.off(); onlineListener = null; }
 
@@ -8818,10 +9011,21 @@ textarea {
                 if (list) list.innerHTML = '';
                 if (drawerList) drawerList.innerHTML = '';
                 let count = 0;
+                const users = [];
                 snapshot.forEach((child) => {
                     const user = child.val();
-                    if (user) { count++; renderOnlineUser(child.key, user, list, drawerList); }
+                    if (user) {
+                        count++;
+                        users.push({ uid: child.key, user: user, priority: getRolePriority(user.role || 'user') });
+                    }
                 });
+
+                users.sort((a, b) => a.priority - b.priority);
+
+                users.forEach(({ uid, user }) => {
+                    renderOnlineUser(uid, user, list, drawerList);
+                });
+
                 if (countBtn) countBtn.textContent = count;
                 scheduleFitNicknames(drawerList);
                 scheduleFitNicknames(list);
@@ -9387,13 +9591,18 @@ textarea {
         }
 
         async function addPost() {
+            if (!isCurrentUserVerifiedOrHigher()) {
+                showVerifiedRequiredMessage();
+                return;
+            }
+
             const content = document.getElementById('post-content').value.trim();
-            
+
             if (!content && !tempPostImageFile) {
                 showNotification('Hata', 'İçerik veya fotoğraf gerekli!', '⛔');
                 return;
             }
-            
+
             if (isPostLocked && !isCurrentUserModerator()) {
                 showNotification('Kilitli', 'Gönderi atma şu anda kilitli!', '🔒');
                 return;
@@ -9431,10 +9640,15 @@ textarea {
         }
 
         async function togglePostLike(postId) {
+            if (!isCurrentUserVerifiedOrHigher()) {
+                showVerifiedRequiredMessage();
+                return;
+            }
+
             const postRef = db.ref('posts/' + postId + '/likes');
             const snapshot = await postRef.once('value');
             const likes = snapshot.val() || {};
-            
+
             if (likes[currentUser.uid]) {
                 await postRef.child(currentUser.uid).remove();
             } else {
@@ -9553,6 +9767,11 @@ textarea {
         }
 
         async function addModalPostComment() {
+            if (!isCurrentUserVerifiedOrHigher()) {
+                showVerifiedRequiredMessage();
+                return;
+            }
+
             if (!currentModalPostId) return;
 
             if (isPostLocked && !isCurrentUserModerator()) {
@@ -11032,6 +11251,11 @@ textarea {
         }
 
         async function publishMarketplaceListing() {
+            if (!isCurrentUserVerifiedOrHigher()) {
+                showVerifiedRequiredMessage();
+                return;
+            }
+
             if (!sessionReady || !currentUser) {
                 showNotification('Hata', 'Oturum açın!', '⛔');
                 return;
@@ -11337,6 +11561,11 @@ textarea {
         }
 
         async function addMarketplaceComment(listingId) {
+            if (!isCurrentUserVerifiedOrHigher()) {
+                showVerifiedRequiredMessage();
+                return;
+            }
+
             if (!sessionReady || !currentUser) {
                 showNotification('Hata', 'Oturum açın!', '⛔');
                 return;
@@ -12292,6 +12521,9 @@ textarea {
 
         // Hesap Ban
         async function banAccount(uid) {
+            if (!uid) {
+                uid = document.getElementById('security-action-uid').value;
+            }
             const reason = document.getElementById('ban-reason').value.trim();
             if (!reason) {
                 showNotification('Hata', 'Ban sebebi girin!', '⛔');
@@ -12305,7 +12537,7 @@ textarea {
             });
             await db.ref('online/' + uid).remove();
             await logSecurityEvent('account_ban', { targetUid: uid, reason: reason });
-            
+
             showNotification('Başarılı', 'Hesap banlandı!', '🔨');
             closeModal('security-user-actions-modal');
             loadSecurityData();
@@ -12313,8 +12545,18 @@ textarea {
 
         // IP Ban
         async function banIP(uid) {
+            console.log('banIP çağrıldı, uid:', uid);
+            if (!uid) {
+                uid = document.getElementById('security-action-uid').value;
+                console.log('UID modaldan alındı:', uid);
+            }
+            if (!uid) {
+                showNotification('Hata', 'Kullanıcı ID bulunamadı!', '⛔');
+                return;
+            }
             const userSnap = await db.ref('users/' + uid).once('value');
             const user = userSnap.val();
+            console.log('Kullanıcı verisi:', user);
             if (!user || !user.lastIP) {
                 showNotification('Hata', 'Kullanıcının IP adresi bulunamadı!', '⛔');
                 return;
@@ -12333,7 +12575,7 @@ textarea {
                 bannedBy: currentUserData.username
             });
             await logSecurityEvent('ip_ban', { targetUid: uid, ip: user.lastIP, reason: reason });
-            
+
             showNotification('Başarılı', 'IP banlandı!', '🔨');
             closeModal('security-user-actions-modal');
             loadSecurityData();
@@ -12341,6 +12583,9 @@ textarea {
 
         // Device Ban
         async function banDevice(uid) {
+            if (!uid) {
+                uid = document.getElementById('security-action-uid').value;
+            }
             const userSnap = await db.ref('users/' + uid).once('value');
             const user = userSnap.val();
             if (!user || !user.lastDeviceID) {
@@ -12361,7 +12606,7 @@ textarea {
                 bannedBy: currentUserData.username
             });
             await logSecurityEvent('device_ban', { targetUid: uid, deviceID: user.lastDeviceID, reason: reason });
-            
+
             showNotification('Başarılı', 'Device banlandı!', '🔨');
             closeModal('security-user-actions-modal');
             loadSecurityData();
@@ -12369,13 +12614,16 @@ textarea {
 
         // Ban Kaldır
         async function unbanAccount(uid) {
+            if (!uid) {
+                uid = document.getElementById('security-action-uid').value;
+            }
             await db.ref('users/' + uid).update({
                 banned: false,
                 banReason: null,
                 banExpiry: null
             });
             await logSecurityEvent('account_unban', { targetUid: uid });
-            
+
             showNotification('Başarılı', 'Ban kaldırıldı!', '✅');
             closeModal('security-user-actions-modal');
             loadSecurityData();
@@ -12385,18 +12633,318 @@ textarea {
         async function removeIPBan(ip) {
             await db.ref('ipBans/' + ip).remove();
             await logSecurityEvent('ip_unban', { ip: ip });
-            
+
             showNotification('Başarılı', 'IP banı kaldırıldı!', '✅');
-            loadSecurityData();
+            await loadSecurityData();
         }
 
         // Device Ban Kaldır
         async function removeDeviceBan(deviceID) {
             await db.ref('deviceBans/' + deviceID).remove();
             await logSecurityEvent('device_unban', { deviceID: deviceID });
-            
+
             showNotification('Başarılı', 'Device banı kaldırıldı!', '✅');
-            loadSecurityData();
+            await loadSecurityData();
+        }
+
+        // ===== ONAYLI KULLANICI SİSTEMİ =====
+
+        function openVerifiedRequestModal() {
+            document.getElementById('verified-request-modal').classList.add('active');
+            loadUserCodeLimit();
+            document.getElementById('verified-username').value = currentUserData.username || '';
+        }
+
+        function previewVerifiedImage() {
+            const input = document.getElementById('verified-image-input');
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('verified-preview-img').src = e.target.result;
+                document.getElementById('verified-image-preview').classList.remove('hidden');
+                tempVerifiedImageFile = file;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearVerifiedImage() {
+            document.getElementById('verified-image-input').value = '';
+            document.getElementById('verified-preview-img').src = '';
+            document.getElementById('verified-image-preview').classList.add('hidden');
+            tempVerifiedImageFile = null;
+        }
+
+        async function loadUserCodeLimit() {
+            if (!currentUser) return;
+            const codesSnap = await db.ref('verificationCodes/' + currentUser.uid).limitToLast(1).once('value');
+            const codes = codesSnap.val() || {};
+
+            if (Object.keys(codes).length > 0) {
+                const lastCode = Object.values(codes)[0];
+                const createdAt = lastCode.createdAt;
+                const now = Date.now();
+                const hoursPassed = (now - createdAt) / (1000 * 60 * 60);
+                const hoursRemaining = Math.max(0, 24 - hoursPassed).toFixed(1);
+
+                if (hoursRemaining > 0) {
+                    document.getElementById('verified-code').value = lastCode.code;
+                    document.getElementById('code-limit-info').textContent = `Kod geçerli: ${hoursRemaining} saat kaldı`;
+                } else {
+                    document.getElementById('verified-code').value = '';
+                    document.getElementById('code-limit-info').textContent = 'Kod süresi doldu, yeni kod oluşturun';
+                }
+            } else {
+                document.getElementById('verified-code').value = '';
+                document.getElementById('code-limit-info').textContent = 'Henüz kod oluşturulmadı';
+            }
+        }
+
+        async function generateVerificationCode() {
+            if (!currentUser) {
+                showNotification('Hata', 'Giriş yapmalısınız!', '⛔');
+                return;
+            }
+
+            const codesSnap = await db.ref('verificationCodes/' + currentUser.uid).limitToLast(1).once('value');
+            const codes = codesSnap.val() || {};
+
+            let code;
+            let shouldCreateNew = true;
+
+            if (Object.keys(codes).length > 0) {
+                const lastCode = Object.values(codes)[0];
+                const createdAt = lastCode.createdAt;
+                const now = Date.now();
+                const hoursPassed = (now - createdAt) / (1000 * 60 * 60);
+
+                if (hoursPassed < 24) {
+                    code = lastCode.code;
+                    shouldCreateNew = false;
+                    const hoursRemaining = (24 - hoursPassed).toFixed(1);
+                    showNotification('Bilgi', `Mevcut kod: ${code} (${hoursRemaining} saat kaldı)`, 'ℹ️');
+                }
+            }
+
+            if (shouldCreateNew) {
+                code = 'BK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                await db.ref('verificationCodes/' + currentUser.uid).push({
+                    code: code,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    used: false
+                });
+                showNotification('Başarılı', 'Kod oluşturuldu: ' + code, '✅');
+            }
+
+            document.getElementById('verified-code').value = code;
+            loadUserCodeLimit();
+        }
+
+        async function submitVerifiedRequest() {
+            if (!currentUser) {
+                showNotification('Hata', 'Giriş yapmalısınız!', '⛔');
+                return;
+            }
+
+            const bordokitName = document.getElementById('verified-bordokit-name').value.trim();
+            const username = document.getElementById('verified-username').value.trim();
+            const code = document.getElementById('verified-code').value.trim();
+
+            if (!bordokitName || !username || !code) {
+                showNotification('Hata', 'Tüm alanları doldurun!', '⛔');
+                return;
+            }
+
+            if (!tempVerifiedImageFile) {
+                showNotification('Hata', 'Ekran görüntüsü ekleyin!', '⛔');
+                return;
+            }
+
+            showLoading('Başvuru gönderiliyor...');
+
+            try {
+                const imageUrl = await uploadImage(tempVerifiedImageFile);
+
+                if (!imageUrl) {
+                    hideLoading();
+                    showNotification('Hata', 'Görsel yüklenemedi!', '⛔');
+                    return;
+                }
+
+                await db.ref('verifiedRequests').push({
+                    uid: currentUser.uid,
+                    username: username,
+                    bordokitName: bordokitName,
+                    code: code,
+                    imageUrl: imageUrl,
+                    status: 'pending',
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                hideLoading();
+                showNotification('Başarılı', 'Başvurunuz gönderildi!', '✅');
+                closeModal('verified-request-modal');
+                clearVerifiedImage();
+                document.getElementById('verified-bordokit-name').value = '';
+                document.getElementById('verified-code').value = '';
+            } catch (error) {
+                hideLoading();
+                showNotification('Hata', 'Başvuru gönderilemedi: ' + error.message, '⛔');
+            }
+        }
+
+        function openVerifiedRequestsModal() {
+            if (!isCurrentUserModerator()) {
+                showNotification('Hata', 'Yetkiniz yok!', '⛔');
+                return;
+            }
+            document.getElementById('verified-requests-modal').classList.add('active');
+            loadVerifiedRequests();
+        }
+
+        async function loadVerifiedRequests() {
+            const container = document.getElementById('verified-requests-list');
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Yükleniyor...</div>';
+
+            try {
+                const snap = await db.ref('verifiedRequests').orderByChild('status').equalTo('pending').once('value');
+                const requests = snap.val() || {};
+
+                if (Object.keys(requests).length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Bekleyen başvuru yok.</div>';
+                    return;
+                }
+
+                let html = '';
+                for (const requestId in requests) {
+                    const req = requests[requestId];
+                    const date = new Date(req.createdAt).toLocaleString('tr-TR');
+                    const safeRequestId = requestId.replace(/'/g, "\\'");
+
+                    // Firebase'den kullanıcının gerçek username'ini çek
+                    let realUsername = req.username;
+                    try {
+                        const userSnap = await db.ref('users/' + req.uid).once('value');
+                        const userData = userSnap.val();
+                        if (userData && userData.username) {
+                            realUsername = userData.username;
+                        }
+                    } catch (e) {
+                        console.log('Kullanıcı adı çekilemedi:', e);
+                    }
+
+                    html += `
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(0, 212, 255, 0.3); cursor: pointer;" onclick="viewVerifiedRequestDetail('${safeRequestId}')">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-family: 'Press Start 2P', cursive; font-size: 12px; color: var(--sakura-pink);">${escapeHtml(realUsername)}</div>
+                                    <div style="font-size: 11px; color: #00d4ff; margin-top: 5px; font-weight: 700;">🎮 Oyun İçi: ${escapeHtml(req.bordokitName)}</div>
+                                </div>
+                                <div style="font-size: 9px; color: #888;">${date}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--admin);">Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function viewVerifiedRequestDetail(requestId) {
+            const snap = await db.ref('verifiedRequests/' + requestId).once('value');
+            const req = snap.val();
+
+            if (!req) {
+                showNotification('Hata', 'Başvuru bulunamadı!', '⛔');
+                return;
+            }
+
+            currentVerifiedRequestId = requestId;
+
+            // Firebase'den kullanıcının gerçek username'ini çek
+            let realUsername = req.username;
+            try {
+                const userSnap = await db.ref('users/' + req.uid).once('value');
+                const userData = userSnap.val();
+                if (userData && userData.username) {
+                    realUsername = userData.username;
+                }
+            } catch (e) {
+                console.log('Kullanıcı adı çekilemedi:', e);
+            }
+
+            document.getElementById('detail-username').textContent = realUsername;
+            document.getElementById('detail-uid').textContent = req.uid;
+            document.getElementById('detail-bordokit-name').textContent = req.bordokitName;
+            document.getElementById('detail-code').textContent = req.code;
+            document.getElementById('detail-image').src = req.imageUrl;
+
+            document.getElementById('verified-request-detail-modal').classList.add('active');
+        }
+
+        function closeVerifiedRequestDetail() {
+            closeModal('verified-request-detail-modal');
+            document.getElementById('verified-requests-modal').classList.add('active');
+        }
+
+        async function approveVerifiedRequest() {
+            if (!currentVerifiedRequestId) return;
+
+            try {
+                const snap = await db.ref('verifiedRequests/' + currentVerifiedRequestId).once('value');
+                const req = snap.val();
+
+                if (req) {
+                    await db.ref('users/' + req.uid).update({
+                        role: 'verified'
+                    });
+
+                    await db.ref('verifiedRequests/' + currentVerifiedRequestId).update({
+                        status: 'approved',
+                        reviewedAt: firebase.database.ServerValue.TIMESTAMP,
+                        reviewedBy: currentUserData.username
+                    });
+
+                    await createNotification(
+                        req.uid,
+                        '✓ Onaylı Kullanıcı Oldunuz!',
+                        'Tebrikler! Başvurunuz onaylandı ve artık onaylı kullanıcı rolüne sahipsiniz.',
+                        'general',
+                        currentVerifiedRequestId,
+                        'navigate',
+                        'profile',
+                        req.uid
+                    );
+
+                    showNotification('Başarılı', 'Kullanıcı onaylandı!', '✅');
+                    closeModal('verified-request-detail-modal');
+                    loadVerifiedRequests();
+                    document.getElementById('verified-requests-modal').classList.add('active');
+                }
+            } catch (error) {
+                showNotification('Hata', 'İşlem başarısız: ' + error.message, '⛔');
+            }
+        }
+
+        async function rejectVerifiedRequest() {
+            if (!currentVerifiedRequestId) return;
+
+            try {
+                await db.ref('verifiedRequests/' + currentVerifiedRequestId).update({
+                    status: 'rejected',
+                    reviewedAt: firebase.database.ServerValue.TIMESTAMP,
+                    reviewedBy: currentUserData.username
+                });
+
+                showNotification('Başarılı', 'Başvuru reddedildi!', '✅');
+                closeModal('verified-request-detail-modal');
+                loadVerifiedRequests();
+                document.getElementById('verified-requests-modal').classList.add('active');
+            } catch (error) {
+                showNotification('Hata', 'İşlem başarısız: ' + error.message, '⛔');
+            }
         }
     </script>
 </body>
