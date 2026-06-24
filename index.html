@@ -565,6 +565,32 @@ textarea.post-composer-input {
     box-shadow: 0 0 20px rgba(var(--sakura-pink-rgb), 0.08);
 }
 
+.mobile-refresh-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(var(--sakura-pink-rgb), 0.12);
+    color: var(--sakura-pink);
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(var(--sakura-pink-rgb), 0.25);
+    transform: rotate(180deg);
+}
+
+.mobile-refresh-btn:active {
+    transform: rotate(360deg);
+}
+
 /* ============================================
    7. AVATARS
    ============================================ */
@@ -5751,6 +5777,10 @@ body.keyboard-open .dm-chat-input-area {
     .marketplace-header-mobile {
         display: none !important;
     }
+
+    .mobile-refresh-btn {
+        display: none !important;
+    }
 }
 
 @media (max-width: 767px) {
@@ -5793,6 +5823,10 @@ body.keyboard-open .dm-chat-input-area {
     .header {
         height: var(--header-h);
         min-height: var(--header-h);
+    }
+
+    .mobile-refresh-btn {
+        display: flex !important;
     }
 }
 
@@ -5978,6 +6012,9 @@ textarea {
                 <span style="font-size: 22px;">🔔</span>
                 <span class="notification-badge" id="notification-badge">0</span>
             </div>
+            <button class="mobile-refresh-btn" id="mobile-refresh-btn" onclick="refreshPage()" title="Sayfayı Yenile">
+                🔄
+            </button>
             <div class="user-info" onclick="openProfile()">
                 <div class="avatar" id="header-avatar">👤</div>
                 <div class="header-user-meta">
@@ -10775,9 +10812,18 @@ textarea {
             const newRole = document.getElementById('role-select').value;
             await db.ref('users/' + viewingUserId).update({ role: newRole });
             
+            // Çevrimiçi listeyi güncelle
+            await db.ref('online/' + viewingUserId + '/role').set(newRole);
+            
             // Local data ve UI'ı güncelle
             if (viewingUserData) {
                 viewingUserData.role = newRole;
+            }
+            
+            // Eğer kendi rolünü değiştiriyorsa currentUserData'yı da güncelle
+            if (viewingUserId === currentUser.uid) {
+                currentUserData.role = newRole;
+                applyHeaderFromUserData();
             }
             
             // Modaldaki rol badge'ini güncelle
@@ -12159,6 +12205,14 @@ textarea {
                 showAuthScreen();
             }
         });
+
+        // ================================================================
+        // REFRESH PAGE
+        // ================================================================
+
+        function refreshPage() {
+            location.reload();
+        }
 
         // ================================================================
         // GLOBAL EVENT LISTENERS
