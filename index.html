@@ -3,305 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bordokit - Bakım Modu</title>
+    <title>BordoKit Duyurusu</title>
+    <!-- Google Fonts: Premium ve okunaklı font seçimi (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- Temel Ayarlar ve Reset --- */
+        /* --- Temel Ayarlar ve Değişkenler --- */
+        :root {
+            --bg-color: #0b0c10;
+            --accent-color: #7289da; /* Discord esintili premium mavi/mor tonu */
+            --accent-glow: rgba(114, 137, 218, 0.3);
+            --text-main: #f5f6fa;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(25, 25, 35, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shine: rgba(255, 255, 255, 0.03);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
 
-        body {
-            background-color: #0d0f14;
-            min-height: 100vh;
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            position: relative;
-            color: #ffffff;
-            padding: 20px;
+            perspective: 1000px;
         }
 
-        /* --- Arka Plan Işık Efektleri (Glow) --- */
-        body::before, body::after {
+        /* --- Arka Plan Dinamik Efektleri --- */
+        .bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: radial-gradient(circle at 50% 50%, #1a1c24 0%, #0b0c10 100%);
+            overflow: hidden;
+        }
+
+        /* Yavaşça hareket eden ambient gradyan küreleri */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: floatGlow 25s infinite alternate ease-in-out;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .glow-1 { top: -10%; left: -10%; animation-delay: 0s; }
+        .glow-2 { bottom: -10%; right: -10%; animation-delay: -5s; --accent-glow: rgba(139, 92, 246, 0.2); }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(80px, 50px) scale(1.1); }
+            100% { transform: translate(-40px, 90px) scale(0.9); }
+        }
+
+        /* Tuval üzerindeki partiküller için container */
+        #particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        /* --- Ana Wrapper (Parallax ve Fade-in için) --- */
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 720px;
+            padding: 24px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInPage 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: transform 0.1s ease-out; /* Parallax için akıcılık */
+        }
+
+        @keyframes fadeInPage {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Premium Cam Efektli Kart (Apple & Discord esintili) --- */
+        .announcement-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 0 var(--glass-shine);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Kart üstü parıltı çizgisi */
+        .announcement-card::before {
             content: '';
             position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: 0;
-            opacity: 0.4;
-            animation: pulse 8s infinite alternate;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.03),
+                transparent
+            );
+            transform: rotate(-45deg);
+            pointer-events: none;
         }
 
-        body::before {
-            background: #00d2ff; /* Mavi tonu */
-            top: 20%;
-            left: 20%;
-        }
-
-        body::after {
-            background: #9d4edd; /* Mor tonu */
-            bottom: 20%;
-            right: 20%;
-            animation-delay: 4s;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.3; }
-            100% { transform: scale(1.2); opacity: 0.5; }
-        }
-
-        /* --- Ana Kart (Glassmorphism) --- */
-        .maintenance-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 50px 40px;
-            width: 100%;
-            max-width: 580px;
-            text-align: center;
-            z-index: 1;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- Modern Kalkan İkonu (CSS) --- */
-        .icon-container {
-            margin-bottom: 25px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .shield-icon {
-            width: 70px;
-            height: 75px;
-            background: linear-gradient(135deg, #00d2ff, #9d4edd);
-            clip-path: polygon(50% 0%, 100% 20%, 100% 70%, 50% 100%, 0% 70%, 0% 20%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
-            animation: float 4s ease-in-out infinite;
-        }
-
-        /* Kalkanın içindeki tik işareti */
-        .shield-icon::after {
-            content: '';
-            width: 15px;
-            height: 30px;
-            border: solid #0d0f14;
-            border-width: 0 5px 5px 0;
-            transform: rotate(45deg);
-            margin-top: -5px;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* --- Metin Tasarımları --- */
-        h1 {
-            font-size: 3.2rem;
-            font-weight: 800;
-            letter-spacing: 4px;
-            background: linear-gradient(135deg, #ffffff 40%, #a2a8d3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+        /* --- Tipografi & İçerik --- */
+        .badge {
+            display: inline-block;
+            background: rgba(114, 137, 218, 0.15);
+            border: 1px solid rgba(114, 137, 218, 0.3);
+            color: #a3b8cc;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
             text-transform: uppercase;
         }
 
-        .announcement {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            color: #cbd5e1;
-            margin-bottom: 15px;
-            font-weight: 300;
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 30%, #a3b8cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 28px;
         }
 
-        .team-name {
-            font-size: 1rem;
-            color: #00d2ff;
+        .description {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .description p {
+            margin-bottom: 16px;
+        }
+        .description p:last-child {
+            margin-bottom: 0;
+            font-weight: 500;
+            color: rgba(245, 246, 252, 0.9);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+            margin: 32px 0;
+        }
+
+        .countdown-title {
+            font-size: 1.15rem;
             font-weight: 600;
-            letter-spacing: 1px;
-            margin-bottom: 35px;
+            letter-spacing: 0.02em;
+            color: var(--text-main);
+            text-transform: uppercase;
+            margin-bottom: 24px;
             opacity: 0.9;
         }
 
-        /* --- Seperatör Hattı --- */
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            margin-bottom: 35px;
-        }
-
-        /* --- Canlı Geri Sayım Sayacı --- */
+        /* --- Geri Sayım Kutuları (Grid Sistemi) --- */
         .countdown-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 10px;
         }
 
         .countdown-box {
-            flex: 1;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 15px 10px;
-            border-radius: 14px;
+            border-radius: 16px;
+            padding: 18px 10px;
             position: relative;
-            transition: transform 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
+        /* Premium hover etkileri */
         .countdown-box:hover {
-            transform: translateY(-3px);
-            border-color: rgba(0, 210, 255, 0.2);
+            transform: translateY(-5px);
+            background: rgba(114, 137, 218, 0.06);
+            border-color: rgba(114, 137, 218, 0.3);
+            box-shadow: 0 12px 24px rgba(114, 137, 218, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        .countdown-value {
-            font-size: 2rem;
+        .countdown-number {
+            font-size: 2.2rem;
             font-weight: 700;
+            font-variant-numeric: tabular-nums;
             color: #ffffff;
             display: block;
-            font-variant-numeric: tabular-nums;
+            margin-bottom: 4px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Sayı değişirken kullanılacak animasyon sınıfı */
+        .pop-animation {
+            animation: numPop 0.3s ease-out;
+        }
+
+        @keyframes numPop {
+            0% { transform: scale(0.92); opacity: 0.6; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .countdown-label {
             font-size: 0.75rem;
-            color: #64748b;
+            font-weight: 500;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 5px;
+            letter-spacing: 0.05em;
             display: block;
         }
 
-        /* --- Alt Bilgi Mesajı --- */
-        .footer-message {
-            font-size: 0.85rem;
-            color: #64748b;
-            letter-spacing: 0.5px;
-            font-style: italic;
+        /* --- Zaman Dolduğunda Gelecek Ekran --- */
+        .completion-message {
+            display: none;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulseGlow 2s infinite alternate ease-in-out;
+            padding: 40px 0;
         }
 
-        /* --- Mobil Uyumluluk (Responsive) --- */
-        @media (max-width: 480px) {
-            .maintenance-card {
-                padding: 40px 20px;
-            }
+        @keyframes pulseGlow {
+            0% { transform: scale(0.98); filter: drop-shadow(0 0 10px rgba(114, 137, 218, 0)); }
+            100% { transform: scale(1.02); filter: drop-shadow(0 0 25px rgba(114, 137, 218, 0.6)); }
+        }
 
-            h1 {
-                font-size: 2.4rem;
-            }
+        /* --- Footer Detayı --- */
+        .card-footer {
+            margin-top: 32px;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.4);
+            letter-spacing: 0.05em;
+        }
 
-            .announcement {
-                font-size: 1rem;
+        /* --- Responsive Tasarım Optimizasyonları --- */
+        @media (max-width: 640px) {
+            body, html {
+                overflow-y: auto; /* Mobilde dikey sığmama durumuna karşı koruma */
+                align-items: flex-start;
+                padding: 40px 0;
             }
-
+            .main-wrapper {
+                padding: 16px;
+            }
+            .announcement-card {
+                padding: 36px 20px;
+                border-radius: 20px;
+            }
+            .main-title {
+                font-size: 1.9rem;
+            }
+            .description {
+                font-size: 0.95rem;
+            }
             .countdown-container {
-                gap: 8px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
             }
-
             .countdown-box {
-                padding: 10px 5px;
+                padding: 14px 8px;
             }
-
-            .countdown-value {
-                font-size: 1.4rem;
-            }
-
-            .countdown-label {
-                font-size: 0.65rem;
+            .countdown-number {
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="maintenance-card">
-        <div class="icon-container">
-            <div class="shield-icon"></div>
+    <!-- Arka plan görsel katmanları -->
+    <div class="bg-canvas">
+        <div class="ambient-glow glow-1"></div>
+        <div class="ambient-glow glow-2"></div>
+        <canvas id="particles-container"></canvas>
+    </div>
+
+    <!-- Parallax etkileşimli ana sarıcı -->
+    <div class="main-wrapper" id="scene">
+        
+        <!-- Merkez Kart -->
+        <div class="announcement-card">
+            
+            <div class="badge">Sistem Durumu</div>
+            
+            <h1 class="main-title">BordoKit Duyurusu</h1>
+            
+            <div class="description">
+                <p>BordoKit sitesi ve buna bağlı diğer tüm projelerimiz geçici olarak dondurulmuştur.</p>
+                <p>Bu süreç boyunca kanalın ve projelerin sahibi Bordo, akademik kariyerine ve eğitim hayatına odaklanacaktır.</p>
+                <p>Anlayışınız ve desteğiniz için teşekkür ederiz.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Geri Sayım Arayüz Grubu -->
+            <div id="countdown-group">
+                <h2 class="countdown-title">Bordonun Dönmesine Kalan</h2>
+                
+                <div class="countdown-container">
+                    <!-- Gün Kutusu -->
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="days">00</span>
+                        <span class="countdown-label">Gün</span>
+                    </div>
+                    <!-- Saat Kutusu -->
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="hours">00</span>
+                        <span class="countdown-label">Saat</span>
+                    </div>
+                    <!-- Dakika Kutusu -->
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="minutes">00</span>
+                        <span class="countdown-label">Dakika</span>
+                    </div>
+                    <!-- Saniye Kutusu -->
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="seconds">00</span>
+                        <span class="countdown-label">Saniye</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Süre Bittiğinde Tetiklenecek Mesaj -->
+            <div class="completion-message" id="complete-msg">
+                Bordo Geri Döndü!
+            </div>
+            
+            <div class="card-footer">
+                &copy; 2026 BordoDev. Tüm Hakları Saklıdır.
+            </div>
+
         </div>
-
-        <h1>Bordokit</h1>
-
-        <p class="announcement">Bordokit sitemiz güvenlik güncellemeleri nedeniyle 27 Haziran Cumartesi günü tekrar açılacaktır.</p>
-        <p class="team-name">BordoDev Ekibi</p>
-
-        <div class="divider"></div>
-
-        <div class="countdown-container">
-            <div class="countdown-box">
-                <span class="countdown-value" id="days">00</span>
-                <span class="countdown-label">Gün</span>
-            </div>
-            <div class="countdown-box">
-                <span class="countdown-value" id="hours">00</span>
-                <span class="countdown-label">Saat</span>
-            </div>
-            <div class="countdown-box">
-                <span class="countdown-value" id="minutes">00</span>
-                <span class="countdown-label">Dakika</span>
-            </div>
-            <div class="countdown-box">
-                <span class="countdown-value" id="seconds">00</span>
-                <span class="countdown-label">Saniye</span>
-            </div>
-        </div>
-
-        <p class="footer-message">Güvenliğiniz için çalışıyoruz...</p>
     </div>
 
     <script>
-        // Hedef tarih: 27 Haziran Cumartesi (Gece yarısı 00:00 başlangıcı varsayılmıştır)
-        // Eğer gün ortasında açılacaksa "June 27, 2026 12:00:00" gibi saat ekleyebilirsin.
-        const targetYear = new Date().getFullYear(); 
-        // Eğer Haziran ayı çoktan geçildiyse bir sonraki yılın haziranını hedefler, stabilite için dinamik ayarlandı.
-        let targetDate = new Date(`June 27, ${targetYear} 00:00:00`).getTime();
+        // --- 1. HAFİF VE FPS DOSTU PARTİKÜL SİSTEMİ ---
+        const canvas = document.getElementById('particles-container');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.2 - 0.1;
+                this.speedY = Math.random() * -0.3 - 0.1; // Yukarı doğru yavaş akış
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+                if (this.x < 0 || this.x > canvas.width) {
+                    this.speedX = -this.speedX;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(245, 246, 252, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            const particleCount = Math.min(60, Math.floor(window.innerWidth / 20)); // Cihaza göre optimize sayı
+            for (let i = 0; i < particleCount; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+
+
+        // --- 2. SMOOTH PARALLAX EFEKTİ ---
+        const scene = document.getElementById('scene');
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
+
+        // Sadece masaüstü cihazlarda parallax etkinleştirerek performans korunur
+        if (window.innerWidth > 1024) {
+            window.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX - window.innerWidth / 2;
+                const mouseY = e.clientY - window.innerHeight / 2;
+                // Etki katsayısı (Düşük tutularak premium/premium ağırlık hissi verilir)
+                targetX = (mouseX / window.innerWidth) * 20; 
+                targetY = (mouseY / window.innerHeight) * 20;
+            });
+
+            function lerpParallax() {
+                // Yumuşak geçiş (Linear Interpolation)
+                currentX += (targetX - currentX) * 0.08;
+                currentY += (targetY - currentY) * 0.08;
+                scene.style.transform = `rotateY(${currentX}deg) rotateX(${-currentY}deg) translateY(0px)`;
+                requestAnimationFrame(lerpParallax);
+            }
+            lerpParallax();
+        }
+
+
+        // --- 3. GERÇEK ZAMANLI GERİ SAYIM MOTORU ---
+        // Hedef Zaman Ayarı: 1 Ağustos 2027 00:00:00 (Europe/Istanbul)
+        const targetDateStr = "2027-08-01T00:00:00";
+        
+        // Tarayıcı bağımsız tam uyumluluk için Turkey Saati (UTC+3) milisaniye farkını hesaplama veya doğrudan hedef zamanı oluşturma
+        // JavaScript Date nesnesi lokal saat diliminde çalışır, bu yüzden Europe/Istanbul hedef zaman damgasını üretelim:
+        const targetDate = new Date(new Date(targetDateStr).toLocaleString("en-US", {timeZone: "Europe/Istanbul"}));
+
+        // DOM Elementleri
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const countdownGroup = document.getElementById('countdown-group');
+        const completeMsg = document.getElementById('complete-msg');
+
+        // Önceki değerleri saklamak ve sadece değiştiğinde animasyon tetiklemek için hafıza objesi
+        let lastValues = { days: "", hours: "", minutes: "", seconds: "" };
 
         function updateCountdown() {
-            const now = new Date().getTime();
+            const now = new Date();
             const difference = targetDate - now;
 
-            // Zaman birimlerinin hesaplanması
+            if (difference <= 0) {
+                // Zaman dolduğunda sayacı kaldır, başarı mesajını getir
+                countdownGroup.style.display = 'none';
+                completeMsg.style.display = 'block';
+                clearInterval(countdownInterval);
+                return;
+            }
+
+            // Zaman matematiksel dönüşümleri
             const d = Math.floor(difference / (1000 * 60 * 60 * 24));
             const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((difference % (1000 * 60)) / 1000);
 
-            // Çift haneli görünüm (Örn: 05 yerine 5 olmaması için)
-            const formatTime = (time) => time < 10 ? `0${time}` : time;
+            // Değerleri DOM'a basma ve yumuşak değişim animasyonu kontrolü
+            updateBox(daysEl, d, 'days');
+            updateBox(hoursEl, h, 'hours');
+            updateBox(minutesEl, m, 'minutes');
+            updateBox(secondsEl, s, 'seconds');
+        }
 
-            if (difference > 0) {
-                document.getElementById('days').innerText = formatTime(d);
-                document.getElementById('hours').innerText = formatTime(h);
-                document.getElementById('minutes').innerText = formatTime(m);
-                document.getElementById('seconds').innerText = formatTime(s);
-            } else {
-                // Süre dolduğunda sıfırla veya alternatif mesaj göster
-                document.getElementById('days').innerText = "00";
-                document.getElementById('hours').innerText = "00";
-                document.getElementById('minutes').innerText = "00";
-                document.getElementById('seconds').innerText = "00";
-                clearInterval(countdownInterval);
+        function updateBox(element, newValue, key) {
+            // Çift haneli görünüm formatı
+            const formattedValue = String(newValue).padStart(2, '0');
+            
+            if (lastValues[key] !== formattedValue) {
+                element.textContent = formattedValue;
+                
+                // Animasyon sınıfını ekle-çıkart yaparak sayfa akıcılığını artırma
+                element.classList.remove('pop-animation');
+                void element.offsetWidth; // DOM reflow tetikleme (animasyonun resetlenmesi için anahtar)
+                element.classList.add('pop-animation');
+                
+                lastValues[key] = formattedValue;
             }
         }
 
-        // İlk yüklemede çalıştır ve her saniye güncelle
+        // İlk çalıştırma ve saniyelik döngü
         updateCountdown();
         const countdownInterval = setInterval(updateCountdown, 1000);
     </script>
